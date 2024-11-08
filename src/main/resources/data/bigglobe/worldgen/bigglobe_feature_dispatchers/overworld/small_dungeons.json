@@ -1,7 +1,7 @@
 {
 	"type": "script",
 	"dispatcher": [
-		"if (minModifiableX & 2x10000 == 0 && minModifiableZ & 2x10000 == 0:",
+		"if (minModifiableX & 31 == 0 && minModifiableZ & 31 == 0:",
 			"for (int baseY in range[minModifiableY, maxModifiableY) % 32:",
 				"repeat attemptLoop (16:",
 					"int*(",

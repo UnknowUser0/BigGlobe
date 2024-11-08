@@ -32,13 +32,6 @@ public class Directions {
 	public static final BlockMirror[]
 		MIRRORS    = BlockMirror.values();
 
-	public static Direction get(Axis axis, AxisDirection axisDirection) {
-		return switch (axisDirection) {
-			case POSITIVE -> axis.getPositiveDirection();
-			case NEGATIVE -> axis.getNegativeDirection();
-		};
-	}
-
 	/**
 	returns the {@link BlockRotation} which,
 	when applied to (from), will produce (to).

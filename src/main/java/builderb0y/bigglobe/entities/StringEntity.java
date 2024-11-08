@@ -26,9 +26,9 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.loot.LootTable;
+import net.minecraft.loot.context.LootContext;
 import net.minecraft.loot.context.LootContextParameters;
 import net.minecraft.loot.context.LootContextTypes;
-import net.minecraft.loot.context.LootWorldContext;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryKey;
@@ -167,14 +167,18 @@ public class StringEntity extends Entity {
 		.getReloadableRegistries()
 		.getLootTable(LOOT_TABLE_KEY)
 		.generateLoot(
-			new LootWorldContext.Builder(world)
+			#if MC_VERSION >= MC_1_21_2
+				new net.minecraft.loot.context.LootWorldContext.Builder(world)
+			#else
+				new net.minecraft.loot.context.LootContextParameterSet.Builder(world)
+			#endif
 			.add(LootContextParameters.THIS_ENTITY, this)
 			.add(LootContextParameters.ORIGIN, this.getPos())
 			.add(LootContextParameters.DAMAGE_SOURCE, damageSource)
 			.addOptional(LootContextParameters.ATTACKING_ENTITY, damageSource.getAttacker())
 			.addOptional(LootContextParameters.DIRECT_ATTACKING_ENTITY, damageSource.getSource())
 			.build(LootContextTypes.ENTITY),
-			(ItemStack stack) -> this.dropStack(world, stack)
+			(ItemStack stack) -> this.dropStack(#if MC_VERSION >= MC_1_21_2 world, #endif stack)
 		);
 	}
 

@@ -27,7 +27,7 @@ Configured features are found in `/data/(modid)/worldgen/configured_feature` whe
 ## Additional variables
 
 * `int originX`, `originY`, and `originZ` - the x, y, and z coordinates that this configured feature was placed at.
-* `boolean distantHorizons` true if we are currently generating terrain for distant horizons fake chunks, false otherwise. This can be used to skip details that aren't visible from a distance.
+* `boolean distantHorizons` (deprecated, replaced with `hints.isLod`) - true if we are currently generating terrain for distant horizons fake chunks, false otherwise. This can be used to skip details that aren't visible from a distance.
 
 ## Additional functions
 

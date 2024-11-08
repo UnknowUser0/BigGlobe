@@ -46,8 +46,10 @@ changelog:
 	* The bogged mob now spawns in swamps.
 	* Structures should no longer collide with each other.
 	* Balls of string work goodly now and are less glitchy than before.
+	* By popular demand, added jappafied variants of a couple textures that stood out when not using programmer art.
 	* Fixed some holes in terrain with Distant Horizons and Voxy when using hyperspeed generation (you may need to reset your database though).
 	* Fixed crash when creating a world on some systems.
+	* Fixed a couple issues related to exiting hyperspace through unconventional means.
 	* Removed the config option to grow saplings into big globe trees OUTSIDE of Big Globe worlds, because turns out it hasn't worked in a long time anyway and I never noticed.
 	# Changes for data pack makers:
 	* All tags everywhere must be prefixed with `#` now, including in scripts.

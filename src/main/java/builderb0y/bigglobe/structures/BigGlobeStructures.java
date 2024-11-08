@@ -18,7 +18,6 @@ import builderb0y.bigglobe.structures.dungeons.SmallDungeonStructure;
 import builderb0y.bigglobe.structures.megaTree.MegaTreeBall;
 import builderb0y.bigglobe.structures.megaTree.MegaTreeStructure;
 import builderb0y.bigglobe.structures.scripted.ScriptedStructure;
-import builderb0y.bigglobe.versions.RegistryVersions;
 
 public class BigGlobeStructures {
 

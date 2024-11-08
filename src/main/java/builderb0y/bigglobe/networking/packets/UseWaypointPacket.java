@@ -93,8 +93,6 @@ public class UseWaypointPacket implements C2SPlayPacketHandler<Integer> {
 				);
 				if (newPlayer != null) {
 					EntityVersions.setPortalCooldown(newPlayer, 20);
-					newPlayer.interactionManager.getGameMode().setAbilities(newPlayer.getAbilities());
-					newPlayer.networkHandler.sendPacket(new PlayerAbilitiesS2CPacket(newPlayer.getAbilities()));
 				}
 			}
 			else {
