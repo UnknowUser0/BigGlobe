@@ -51,6 +51,7 @@ changelog:
 	* Fixed crash when creating a world on some systems.
 	* Fixed a couple issues related to exiting hyperspace through unconventional means.
 	* Removed the config option to grow saplings into big globe trees OUTSIDE of Big Globe worlds, because turns out it hasn't worked in a long time anyway and I never noticed.
+	* Added russian translation provided by "mpustovoi". I have no idea how accurate these translations are.
 	# Changes for data pack makers:
 	* All tags everywhere must be prefixed with `#` now, including in scripts.
 	* Added new "scripted" random source type.
