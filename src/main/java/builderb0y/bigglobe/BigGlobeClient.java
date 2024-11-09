@@ -3,6 +3,9 @@ package builderb0y.bigglobe;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import org.spongepowered.asm.mixin.MixinEnvironment;
+
+import net.minecraft.client.MinecraftClient;
 
 import builderb0y.bigglobe.blocks.BigGlobeBlocks;
 import builderb0y.bigglobe.commands.BigGlobeCommands;
@@ -11,7 +14,6 @@ import builderb0y.bigglobe.compat.satin.SatinCompat;
 import builderb0y.bigglobe.entities.BigGlobeEntityRenderers;
 import builderb0y.bigglobe.fluids.BigGlobeFluids;
 import builderb0y.bigglobe.hyperspace.HyperspaceDimensionEffects;
-import builderb0y.bigglobe.hyperspace.ClientPlayerWaypointManager;
 import builderb0y.bigglobe.items.BigGlobeItems;
 import builderb0y.bigglobe.networking.base.BigGlobeNetwork;
 import builderb0y.bigglobe.particles.BigGlobeParticles;
@@ -36,5 +38,13 @@ public class BigGlobeClient implements ClientModInitializer {
 		BuiltinScriptEnvironment.PRINTER = new ClientPrintSink();
 		DistantHorizonsCompat.init();
 		BigGlobeMod.LOGGER.info("Done initializing client.");
+
+		if (BigGlobeMod.MIXIN_AUDIT) {
+			MinecraftClient.getInstance().execute(() -> {
+				BigGlobeMod.LOGGER.info("Performing audit...");
+				MixinEnvironment.getCurrentEnvironment().audit();
+				BigGlobeMod.LOGGER.info("Audit complete.");
+			});
+		}
 	}
 }

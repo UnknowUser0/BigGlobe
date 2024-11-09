@@ -142,11 +142,6 @@ public class BigGlobeMod implements ModInitializer {
 			ServerLifecycleEvents.SERVER_STARTING.register(BigGlobeMod::regenWorlds);
 		}
 		LOGGER.info("Done initializing.");
-
-		if (MIXIN_AUDIT) {
-			MixinEnvironment.getCurrentEnvironment().audit();
-			LOGGER.info("Audit complete.");
-		}
 	}
 
 	public static MinecraftServer getCurrentServer() {

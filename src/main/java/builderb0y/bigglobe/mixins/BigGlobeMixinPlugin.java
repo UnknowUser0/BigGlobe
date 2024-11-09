@@ -92,6 +92,10 @@ public class BigGlobeMixinPlugin implements IMixinConfigPlugin {
 		defaults.put(mixinPackage + ".VoxyIntegration",                                                        Boolean.TRUE);
 		defaults.put(mixinPackage + ".WoodlandMansionStructure_DontHardCodeSeaLevel",                          Boolean.TRUE);
 		defaults.put(mixinPackage + ".WorldPresets_MakeBigGlobeTheDefaultWorldType2",                          Boolean.TRUE);
+		#if MC_VERSION >= MC_1_21_2
+		defaults.put(mixinPackage + ".WorldRenderer_RenderHyperspaceSky",                                      Boolean.TRUE);
+		defaults.put(mixinPackage + ".WorldRenderer_RenderWaypoints",                                          Boolean.TRUE);
+		#endif
 		return defaults;
 	}
 

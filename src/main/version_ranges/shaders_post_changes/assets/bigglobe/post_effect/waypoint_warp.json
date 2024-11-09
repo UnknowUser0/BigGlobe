@@ -1,0 +1,32 @@
+{
+	"targets": {
+		"swap": {}
+	},
+	"passes": [
+		{
+			"program": "bigglobe:waypoint_warp",
+			"inputs": [
+				{
+					"sampler_name": "Diffuse",
+					"target": "minecraft:main"
+				},
+				{
+					"sampler_name": "DiffuseDepth",
+					"target": "minecraft:main",
+					"use_depth_buffer": true
+				}
+			],
+			"output": "swap"
+		},
+		{
+			"program": "minecraft:post/blit",
+			"inputs": [
+				{
+					"sampler_name": "In",
+					"target": "swap"
+				}
+			],
+			"output": "minecraft:main"
+		}
+	]
+}

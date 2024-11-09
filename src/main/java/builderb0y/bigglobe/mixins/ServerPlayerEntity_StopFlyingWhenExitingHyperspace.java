@@ -1,12 +1,15 @@
 package builderb0y.bigglobe.mixins;
 
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.network.ServerPlayerInteractionManager;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.World;
 
@@ -17,6 +20,8 @@ import builderb0y.bigglobe.versions.EntityVersions;
 
 @Mixin(ServerPlayerEntity.class)
 public abstract class ServerPlayerEntity_StopFlyingWhenExitingHyperspace extends PlayerEntity {
+
+	@Shadow @Final public ServerPlayerInteractionManager interactionManager;
 
 	public ServerPlayerEntity_StopFlyingWhenExitingHyperspace() {
 		super(null, null, 0.0F, null);
@@ -29,8 +34,7 @@ public abstract class ServerPlayerEntity_StopFlyingWhenExitingHyperspace extends
 		//but they won't hurt anything either.
 		if (oldWorld != null && newWorld != null && newWorld.getRegistryKey() != HyperspaceConstants.WORLD_KEY) {
 			if (oldWorld.getRegistryKey() == HyperspaceConstants.WORLD_KEY) {
-				this.getAbilities().flying = false;
-				this.getAbilities().allowFlying = false;
+				this.interactionManager.getGameMode().setAbilities(this.getAbilities());
 				//only place where this is called from will send
 				//a PlayerAbilitiesS2CPacket shortly afterward.
 			}

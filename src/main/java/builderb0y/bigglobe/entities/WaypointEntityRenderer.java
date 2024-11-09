@@ -6,7 +6,6 @@ import org.joml.Vector3f;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.*;
-import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
@@ -14,7 +13,6 @@ import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.math.Vec3d;
 
 import builderb0y.bigglobe.BigGlobeMod;
-import builderb0y.bigglobe.compat.satin.SatinCompat;
 import builderb0y.bigglobe.entities.WaypointEntity.Orbit;
 import builderb0y.bigglobe.math.BigGlobeMath;
 
@@ -104,7 +102,6 @@ public class WaypointEntityRenderer extends BigGlobeEntityRenderer<WaypointEntit
 				;
 			}
 		}
-		SatinCompat.markWaypointRendered(state.x, state.y, state.z, state.age, state.health);
 	}
 
 	#if MC_VERSION < MC_1_20_4
