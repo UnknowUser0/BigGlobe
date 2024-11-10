@@ -92,6 +92,7 @@
 		"InGameHud_DebugHudGetter",
 		"MinecraftClient_SetWorldEvent",
 		"PostEffectProcessor_PassesAccess",
+		"MinecraftClient_ResetColumnEntryRegistryWhenSelectingAWorld",
 		"Sodium_WorldSlice_UseNoiseInBigGlobeWorlds",
 		"WorldRenderer_RenderHyperspaceSky",
 		"WorldRenderer_RenderWaypoints"

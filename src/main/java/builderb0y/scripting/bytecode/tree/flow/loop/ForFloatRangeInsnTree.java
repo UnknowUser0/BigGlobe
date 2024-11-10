@@ -70,6 +70,7 @@ public class ForFloatRangeInsnTree extends AbstractForRangeInsnTree {
 		}
 		InsnTree step = this.step;
 		if (this.stepVariable != null) {
+			method.scopes.addVariable(this.stepVariable);
 			store(this.stepVariable, step).emitBytecode(method);
 			step = load(this.stepVariable);
 		}

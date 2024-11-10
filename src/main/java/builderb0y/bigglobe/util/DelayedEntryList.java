@@ -20,7 +20,9 @@ import net.minecraft.util.Identifier;
 import builderb0y.autocodec.annotations.SingletonArray;
 import builderb0y.bigglobe.BigGlobeMod;
 import builderb0y.bigglobe.columns.scripted.ColumnEntryRegistry;
+import builderb0y.bigglobe.columns.scripted.ColumnEntryRegistry.CompileTiming;
 import builderb0y.bigglobe.columns.scripted.ColumnEntryRegistry.DelayedCompileable;
+import builderb0y.bigglobe.config.BigGlobeConfig;
 import builderb0y.bigglobe.dynamicRegistries.BetterRegistry;
 import builderb0y.bigglobe.noise.Permuter;
 import builderb0y.scripting.parsing.ScriptParsingException;
@@ -29,7 +31,7 @@ public class DelayedEntryList<T> implements DelayedCompileable {
 
 	public static final Comparator<RegistryEntry<?>> COMPARATOR = Comparator.comparing(UnregisteredObjectException::getID);
 
-	public final @NotNull RegistryKey<Registry<T>> registryKey;
+	public final @NotNull BetterRegistry<T> resolver;
 	public final @NotNull @SingletonArray List<DelayedEntry> delayedEntries;
 	public SortedEncodings sortedEncodings;
 
@@ -40,15 +42,15 @@ public class DelayedEntryList<T> implements DelayedCompileable {
 	public @Nullable RegistryEntryList<T> tag;
 
 	public DelayedEntryList(
-		@NotNull RegistryKey<Registry<T>> registryKey,
+		@NotNull BetterRegistry<T> resolver,
 		@NotNull @SingletonArray List<DelayedEntry> delayedEntries
 	) {
 		this.delayedEntries = delayedEntries;
-		this.registryKey = registryKey;
+		this.resolver = resolver;
 	}
 
-	public DelayedEntryList(@NotNull RegistryKey<Registry<T>> registryKey, @NotNull RegistryEntryList<T> list) {
-		this.registryKey = registryKey;
+	public DelayedEntryList(@NotNull BetterRegistry<T> resolver, @NotNull RegistryEntryList<T> list) {
+		this.resolver = resolver;
 		Optional<TagKey<T>> key = list.getTagKey();
 		if (key.isPresent()) {
 			this.delayedEntries = Collections.singletonList(
@@ -62,11 +64,11 @@ public class DelayedEntryList<T> implements DelayedCompileable {
 	}
 
 	public static <T> DelayedEntryList<T> create(RegistryKey<Registry<T>> key, String... args) {
-		return new DelayedEntryList<>(key, Arrays.stream(args).map(DelayedEntry::new).toList());
+		return new DelayedEntryList<>(BigGlobeMod.getRegistry(key), Arrays.stream(args).map(DelayedEntry::new).toList());
 	}
 
 	public static <T> DelayedEntryList<T> create(RegistryKey<Registry<T>> registryKey, String input) {
-		return new DelayedEntryList<>(registryKey, Collections.singletonList(new DelayedEntry(input)));
+		return new DelayedEntryList<>(BigGlobeMod.getRegistry(registryKey), Collections.singletonList(new DelayedEntry(input)));
 	}
 
 	public boolean isResolved() {
@@ -75,7 +77,7 @@ public class DelayedEntryList<T> implements DelayedCompileable {
 
 	public List<RegistryEntry<T>> entryList() {
 		if (!this.isResolved()) {
-			this.resolve(BigGlobeMod.getRegistry(this.registryKey));
+			this.resolve();
 		}
 		return this.entryList;
 	}
@@ -148,17 +150,22 @@ public class DelayedEntryList<T> implements DelayedCompileable {
 		return Permuter.choose(seed, this.entryList());
 	}
 
-	public void resolve(BetterRegistry<T> registry) {
+	public void resolve() {
 		this.entryList = (
 			this
 			.delayedEntries
 			.stream()
 			.flatMap((DelayedEntry element) -> {
 				if (element.isTag()) {
-					return registry.requireTag(TagKey.of(registry.getKey(), element.id)).stream();
+					TagKey<T> key = TagKey.of(this.resolver.getKey(), element.id);
+					RegistryEntryList<T> resolution = this.resolver.requireTag(key);
+					if (resolution.size() == 0 && BigGlobeConfig.INSTANCE.get().dataPackDebugging) {
+						BigGlobeMod.LOGGER.warn("Empty tag: " + key);
+					}
+					return resolution.stream();
 				}
 				else {
-					return Stream.of(registry.getById(element.id));
+					return Stream.of(this.resolver.getById(element.id));
 				}
 			})
 			.collect(
@@ -176,8 +183,13 @@ public class DelayedEntryList<T> implements DelayedCompileable {
 	}
 
 	@Override
+	public CompileTiming compileTiming() {
+		return CompileTiming.ALWAYS_DELAYED;
+	}
+
+	@Override
 	public void compile(ColumnEntryRegistry registry) throws ScriptParsingException {
-		if (!this.isResolved()) this.resolve(registry.registries.getRegistry(this.registryKey));
+		if (!this.isResolved()) this.resolve();
 	}
 
 	public SortedEncodings getSortedEncodings() {
@@ -190,7 +202,8 @@ public class DelayedEntryList<T> implements DelayedCompileable {
 	/**
 	equality semantics:
 	two DelayedEntryList's are considered equal if they have the
-	same {@link #registryKey} and the same {@link #delayedEntries}.
+	same {@link #resolver}'s {@link BetterRegistry#getKey()}
+	and the same {@link #delayedEntries}.
 	however, the order of entries is irrelevant, since
 	all orders will produce the same {@link #entryList}.
 
@@ -209,7 +222,7 @@ public class DelayedEntryList<T> implements DelayedCompileable {
 	public boolean equals(Object obj) {
 		return this == obj || (
 			obj instanceof DelayedEntryList<?> that &&
-			((RegistryKey<?>)(this.registryKey)) == ((RegistryKey<?>)(that.registryKey)) &&
+			((RegistryKey<?>)(this.resolver.getKey())) == ((RegistryKey<?>)(that.resolver.getKey())) &&
 			this.getSortedEncodings().equals(that.getSortedEncodings())
 		);
 	}
@@ -223,7 +236,7 @@ public class DelayedEntryList<T> implements DelayedCompileable {
 	public String toString() {
 		List<DelayedEntry> entries = this.delayedEntries;
 		int size = entries.size();
-		StringBuilder builder = new StringBuilder((size + 1) << 6).append(this.registryKey.getValue());
+		StringBuilder builder = new StringBuilder((size + 1) << 6).append(this.resolver.getKey().getValue());
 		if (size == 0) return builder.append("[]").toString();
 		builder.append("[ ").append(entries.get(0).encoding);
 		for (int index = 1; index < size; index++) {

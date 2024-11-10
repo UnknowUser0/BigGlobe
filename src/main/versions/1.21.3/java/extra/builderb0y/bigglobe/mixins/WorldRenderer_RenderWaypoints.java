@@ -18,6 +18,7 @@ import net.minecraft.entity.Entity;
 
 import builderb0y.bigglobe.entities.WaypointEntity;
 import builderb0y.bigglobe.hyperspace.HyperspaceRendering;
+import builderb0y.bigglobe.hyperspace.VanillaHyperspaceRendering;
 
 @Mixin(WorldRenderer.class)
 public class WorldRenderer_RenderWaypoints {
@@ -46,13 +47,11 @@ public class WorldRenderer_RenderWaypoints {
 		CallbackInfo callback,
 		@Local FrameGraphBuilder frameGraphBuilder
 	) {
-		if (HyperspaceRendering.visibleWaypoints != null) {
-			for (Entity entity : this.renderedEntities) {
-				if (entity instanceof WaypointEntity waypoint) {
-					HyperspaceRendering.markWaypointVisible(waypoint.getX(), waypoint.getY(), waypoint.getZ(), waypoint.age, waypoint.health);
-				}
+		for (Entity entity : this.renderedEntities) {
+			if (entity instanceof WaypointEntity waypoint) {
+				HyperspaceRendering.markWaypointVisible(waypoint.getX(), waypoint.getY(), waypoint.getZ(), waypoint.age, waypoint.health);
 			}
 		}
-		HyperspaceRendering.renderWaypoints(frameGraphBuilder, tickCounter.getTickDelta(false), this.framebufferSet);
+		VanillaHyperspaceRendering.renderWaypoints(frameGraphBuilder, tickCounter.getTickDelta(false), this.framebufferSet);
 	}
 }

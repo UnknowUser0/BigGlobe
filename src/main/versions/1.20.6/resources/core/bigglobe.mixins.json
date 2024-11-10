@@ -75,7 +75,9 @@
 		"StructureStart_ChildrenGetter",
 		"StructureStart_SaveBoundingBox",
 		"ThrownEntity_CollisionHook",
+		"Voxy_ContextSelectionSystem_UseMemoryStorageBackendForDebugging",
 		"Voxy_WorldEngine_UseBigGlobeGenerator",
+		"Voxy_WorldSection_DataGetter",
 		"WoodlandMansionStructure_DontHardCodeSeaLevel",
 		"World_UseCorrectSeaLevel",
 		"WorldPresets_MakeBigGlobeTheDefaultWorldType2"
@@ -90,6 +92,7 @@
 		"Dev_CreateWorldScreen_DontCrashOnFailure",
 		"InGameHud_DebugHudGetter",
 		"MinecraftClient_SetWorldEvent",
+		"MinecraftClient_ResetColumnEntryRegistryWhenSelectingAWorld",
 		"Sodium_WorldSlice_UseNoiseInBigGlobeWorlds"
 	],
 	"injectors": {

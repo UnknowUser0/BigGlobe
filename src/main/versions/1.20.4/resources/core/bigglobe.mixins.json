@@ -62,7 +62,6 @@
 		"ServerPlayerEntity_StopFlyingWhenExitingHyperspace",
 		"ServerWorld_CustomTimeSpeed",
 		"ServerWorld_SpawnEnderDragonInBigGlobeWorlds",
-		"World_UseCorrectSeaLevel",
 		"ShipwreckGeneratorPiece_UseGeneratorHeight",
 		"SingularPalette_EntryAccess",
 		"SlimeEntity_AllowSpawningFromSpawner",
@@ -75,8 +74,11 @@
 		"StructureStart_ChildrenGetter",
 		"StructureStart_SaveBoundingBox",
 		"ThrownEntity_CollisionHook",
+		"Voxy_ContextSelectionSystem_UseMemoryStorageBackendForDebugging",
 		"Voxy_WorldEngine_UseBigGlobeGenerator",
+		"Voxy_WorldSection_DataGetter",
 		"WoodlandMansionStructure_DontHardCodeSeaLevel",
+		"World_UseCorrectSeaLevel",
 		"WorldPresets_MakeBigGlobeTheDefaultWorldType2"
 	],
 	"client": [
@@ -88,6 +90,7 @@
 		"DebugHud_MakeSearchable",
 		"Dev_CreateWorldScreen_DontCrashOnFailure",
 		"InGameHud_DebugHudGetter",
+		"MinecraftClient_ResetColumnEntryRegistryWhenSelectingAWorld",
 		"MinecraftClient_SetWorldEvent",
 		"Sodium_WorldSlice_UseNoiseInBigGlobeWorlds"
 	],

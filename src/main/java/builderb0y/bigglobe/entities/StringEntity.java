@@ -36,6 +36,7 @@ import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.function.BooleanBiFunction;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.*;
@@ -54,7 +55,11 @@ import builderb0y.bigglobe.versions.EntityVersions;
 
 public class StringEntity extends Entity {
 
-	public static final RegistryKey<LootTable> LOOT_TABLE_KEY = RegistryKey.of(RegistryKeys.LOOT_TABLE, BigGlobeMod.modID("entities/string"));
+	#if MC_VERSION >= MC_1_20_5
+		public static final RegistryKey<LootTable> LOOT_TABLE_KEY = RegistryKey.of(RegistryKeys.LOOT_TABLE, BigGlobeMod.modID("entities/string"));
+	#else
+		public static final Identifier LOOT_TABLE_ID = BigGlobeMod.modID("entities/string");
+	#endif
 	public static final TrackedData<Integer>
 		PREVIOUS_ID = DataTracker.registerData(StringEntity.class, TrackedDataHandlerRegistry.INTEGER),
 		NEXT_ID     = DataTracker.registerData(StringEntity.class, TrackedDataHandlerRegistry.INTEGER);
@@ -164,8 +169,13 @@ public class StringEntity extends Entity {
 	public void dropString(ServerWorld world, DamageSource damageSource) {
 		world
 		.getServer()
-		.getReloadableRegistries()
-		.getLootTable(LOOT_TABLE_KEY)
+		#if MC_VERSION >= MC_1_20_5
+			.getReloadableRegistries()
+			.getLootTable(LOOT_TABLE_KEY)
+		#else
+			.getLootManager()
+			.getLootTable(LOOT_TABLE_ID)
+		#endif
 		.generateLoot(
 			#if MC_VERSION >= MC_1_21_2
 				new net.minecraft.loot.context.LootWorldContext.Builder(world)
@@ -175,8 +185,13 @@ public class StringEntity extends Entity {
 			.add(LootContextParameters.THIS_ENTITY, this)
 			.add(LootContextParameters.ORIGIN, this.getPos())
 			.add(LootContextParameters.DAMAGE_SOURCE, damageSource)
-			.addOptional(LootContextParameters.ATTACKING_ENTITY, damageSource.getAttacker())
-			.addOptional(LootContextParameters.DIRECT_ATTACKING_ENTITY, damageSource.getSource())
+			#if MC_VERSION >= MC_1_21_0
+				.addOptional(LootContextParameters.ATTACKING_ENTITY, damageSource.getAttacker())
+				.addOptional(LootContextParameters.DIRECT_ATTACKING_ENTITY, damageSource.getSource())
+			#else
+				.addOptional(LootContextParameters.KILLER_ENTITY, damageSource.getAttacker())
+				.addOptional(LootContextParameters.DIRECT_KILLER_ENTITY, damageSource.getSource())
+			#endif
 			.build(LootContextTypes.ENTITY),
 			(ItemStack stack) -> this.dropStack(#if MC_VERSION >= MC_1_21_2 world, #endif stack)
 		);

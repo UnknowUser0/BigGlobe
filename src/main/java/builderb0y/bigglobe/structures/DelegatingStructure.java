@@ -101,10 +101,10 @@ public class DelegatingStructure extends Structure {
 		public Config toConfig() {
 			//fill in sensible defaults in case some other mod tries accessing this in a hacky way.
 			return new Config(
-				this.biomes             != null ? this.biomes.tag()       : RegistryEntryList.of(Collections.emptyList()),
-				this.spawn_overrides    != null ? this.spawn_overrides    : Collections.emptyMap(),
-				this.step               != null ? this.step               : GenerationStep.Feature.RAW_GENERATION,
-				this.terrain_adaptation != null ? this.terrain_adaptation : StructureTerrainAdaptation.NONE
+				RegistryEntryList.of(Collections.emptyList()),
+				Collections.emptyMap(),
+				GenerationStep.Feature.RAW_GENERATION,
+				StructureTerrainAdaptation.NONE
 			);
 		}
 	}

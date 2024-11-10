@@ -15,7 +15,6 @@ testing:
 	compatibility with chunk pre-generator mods.
 		"chunky" is the one reported to me, and apparently it either
 		uses up a stupid amount of RAM, or has a memory leak.
-	test all hyperspace renderers (waypoints and dimension) with iris shader packs.
 
 where I left off:
 	check if I can or should make delegating structures not spawn outside of big globe worlds.
@@ -25,17 +24,11 @@ where I left off:
 		do islands need surface_temperature/foliage?
 		do islands need height_adjusted_temperature/foliage?
 	actual biomes for cave types?
+	make it so that casting NaN to int/long throws an ArithmeticException.
 
 to finish before release:
-	document version for Purpose/Hints refactors.
-	document version for offset grids.
-	document version for tag-type feature dispatchers.
 
 changelog:
-	# Known issues:
-	* The renderers for hyperspace and waypoints have not yet been updated.
-		* I am waiting on Satin API to update to 1.21.3 before I fix these renderers.
-		* An error related to this is printed to the game log on launch, but it doesn't seem to hurt anything in-game.
 	# Changes for normal players:
 	* Ported to MC 1.21.3.
 	* Fixed compatibility with LambDynamicLights in MC 1.21.1.
@@ -48,6 +41,7 @@ changelog:
 	* Fixed some holes in terrain with Distant Horizons and Voxy when using hyperspeed generation (you may need to reset your database though).
 	* Fixed crash when creating a world on some systems.
 	* Fixed a couple issues related to exiting hyperspace through unconventional means.
+	* Fixed voxy integration in MC 1.20.4 and 1.20.6.
 	* Removed the config option to grow saplings into big globe trees OUTSIDE of Big Globe worlds, because turns out it hasn't worked in a long time anyway and I never noticed.
 	* Added russian translation provided by "mpustovoi". I have no idea how accurate these translations are.
 	# Changes for data pack makers:

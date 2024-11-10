@@ -197,6 +197,7 @@ public class ColumnEntryRegistry {
 
 		public Loading(BetterRegistry.Lookup betterRegistryLookup) {
 			this.betterRegistryLookup = betterRegistryLookup;
+			this.compileables = new ArrayList<>(256);
 		}
 
 		public static void reset() {
@@ -206,7 +207,7 @@ public class ColumnEntryRegistry {
 
 		public static void beginLoad(BetterRegistry.Lookup betterRegistryLookup) {
 			BigGlobeMod.LOGGER.info("ColumnEntryRegistry begin load: " + LOADING + "; override: " + OVERRIDE.getCurrent());
-			if (BigGlobeMod.currentRegistries == null) {
+			if (BigGlobeMod.currentRegistries == null || BigGlobeMod.currentRegistries.getClass() == betterRegistryLookup.getClass()) {
 				BigGlobeMod.currentRegistries = betterRegistryLookup;
 			}
 			if (LOADING == null) {
@@ -215,8 +216,8 @@ public class ColumnEntryRegistry {
 		}
 
 		public static Loading get() {
-			Loading loading = OVERRIDE.getCurrent();
-			if (loading != null) return loading;
+			Loading override = OVERRIDE.getCurrent();
+			if (override != null) return override;
 			if (LOADING != null) return LOADING;
 			else throw new IllegalStateException("No loading context available.");
 		}
@@ -226,8 +227,8 @@ public class ColumnEntryRegistry {
 			if (successful && LOADING != null) LOADING.compile();
 		}
 
-		public void delay(DelayedCompileable compileable) {
-			if (this.columnEntryRegistry != null) {
+		public void delay(DelayedCompileable compileable, CompileTiming timing) {
+			if (this.columnEntryRegistry != null && timing != CompileTiming.ALWAYS_DELAYED) {
 				try {
 					compileable.compile(this.columnEntryRegistry);
 				}
@@ -236,9 +237,6 @@ public class ColumnEntryRegistry {
 				}
 			}
 			else {
-				if (this.compileables == null) {
-					this.compileables = new ArrayList<>(256);
-				}
 				this.compileables.add(compileable);
 			}
 		}
@@ -251,15 +249,14 @@ public class ColumnEntryRegistry {
 		}
 
 		public void compile() {
-			if (this.columnEntryRegistry != null) return;
-			try {
+			if (this.columnEntryRegistry == null) try {
 				this.columnEntryRegistry = new ColumnEntryRegistry(this.betterRegistryLookup);
 			}
 			catch (ScriptParsingException exception) {
 				LOADING = null;
 				throw new RuntimeException(exception);
 			}
-			if (this.compileables != null) {
+			if (!this.compileables.isEmpty()) {
 				MutableObject<RuntimeException> mainException = new MutableObject<>(null);
 				try (AsyncConsumer<Exception> async = new AsyncConsumer<>(BigGlobeThreadPool.mainExecutor(), (Exception exception) -> {
 					if (exception != null) {
@@ -280,7 +277,7 @@ public class ColumnEntryRegistry {
 						});
 					}
 				}
-				this.compileables = null;
+				this.compileables.clear();
 				RuntimeException main = mainException.getValue();
 				if (main != null) throw main;
 			}
@@ -293,8 +290,8 @@ public class ColumnEntryRegistry {
 		/** called when the {@link ColumnEntryRegistry} is constructed. */
 		public abstract void compile(ColumnEntryRegistry registry) throws ScriptParsingException;
 
-		public default boolean requiresColumns() {
-			return true;
+		public default CompileTiming compileTiming() {
+			return CompileTiming.DELAYED_IF_NECESSARY;
 		}
 
 		/**
@@ -306,17 +303,21 @@ public class ColumnEntryRegistry {
 			DelayedCompileable compileable = context.object;
 			if (compileable == null) return;
 
-			if (compileable.requiresColumns()) {
-				ColumnEntryRegistry.Loading.get().delay(compileable);
+			if (compileable.compileTiming() == CompileTiming.INSTANT) try {
+				compileable.compile(null);
+			}
+			catch (ScriptParsingException exception) {
+				throw new RuntimeException(exception);
 			}
 			else {
-				try {
-					compileable.compile(null);
-				}
-				catch (ScriptParsingException exception) {
-					throw new RuntimeException(exception);
-				}
+				ColumnEntryRegistry.Loading.get().delay(compileable, compileable.compileTiming());
 			}
 		}
+	}
+
+	public static enum CompileTiming {
+		INSTANT,
+		DELAYED_IF_NECESSARY,
+		ALWAYS_DELAYED;
 	}
 }

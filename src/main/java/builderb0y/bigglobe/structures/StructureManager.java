@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.registry.entry.RegistryEntryList;
 import net.minecraft.structure.*;
 import net.minecraft.structure.StructureSet.WeightedEntry;
 import net.minecraft.util.math.BlockBox;
@@ -160,8 +161,7 @@ public class StructureManager {
 							possibilities.remove(index);
 						}
 						else {
-							possibilities.set(index, possibilities.get(possibilities.size() - 1));
-							possibilities.remove(possibilities.size() - 1);
+							possibilities.set(index, possibilities.remove(possibilities.size() - 1));
 						}
 						totalWeight -= entry.weight();
 						continue;
@@ -169,12 +169,14 @@ public class StructureManager {
 				}
 			}
 		}
-		toAdd.sort(
-			Comparator.comparingInt(
-				SortedStructurePieces::volume
-			)
-		);
-		toAdd.checkSelfIntersections();
+		if (!toAdd.isEmpty()) {
+			toAdd.sort(
+				Comparator.comparingInt(
+					SortedStructurePieces::volume
+				)
+			);
+			toAdd.checkSelfIntersections();
+		}
 		return toAdd;
 	}
 
@@ -206,7 +208,7 @@ public class StructureManager {
 		}
 		//System.out.println("Computing " + UnregisteredObjectException.getID(weightedEntry.structure()) + " at " + params.chunkPos);
 		Structure structure = weightedEntry.structure().value();
-		Predicate<RegistryEntry<Biome>> predicate = structure.getValidBiomes()::contains;
+		RegistryEntryList<Biome> validBiomes = structure.getValidBiomes();
 		while (structure instanceof DelegatingStructure delegating && delegating.canDelegateStart()) {
 			structure = delegating.delegate.value();
 		}
@@ -239,7 +241,7 @@ public class StructureManager {
 		}
 		int newY = newStart.getBoundingBox().getMinY();
 		if (
-			!predicate.test(
+			!validBiomes.contains(
 				params.biomeSource().getBiome(
 					newStartPosition.position().getX() >> 2,
 					(newStartPosition.position().getY() + (newY - oldY)) >> 2,

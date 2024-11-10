@@ -11,6 +11,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class NumberArrayTest {
 
+	static {
+		NumberArray.Manager.Testing.TESTING = true;
+	}
+
 	@Test
 	public void testBooleans() {
 		RandomGenerator random = new SplittableRandom(12345L);

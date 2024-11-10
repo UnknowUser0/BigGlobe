@@ -13,8 +13,8 @@ import builderb0y.autocodec.annotations.AddPseudoField;
 import builderb0y.bigglobe.codecs.BigGlobeAutoCodec;
 import builderb0y.bigglobe.versions.BlockStateVersions;
 
-@AddPseudoField("suspicious_stew_effect")
 @AddPseudoField("effect_duration")
+@AddPseudoField("suspicious_stew_effect")
 public class NetherFlowerBlock extends FlowerBlock {
 
 	#if MC_VERSION >= MC_1_20_3
@@ -42,13 +42,13 @@ public class NetherFlowerBlock extends FlowerBlock {
 		}
 	#else
 
-		public NetherFlowerBlock(StatusEffect suspicious_stew_effect, int effect_duration, Settings settings) {
-			super(suspicious_stew_effect, effect_duration, settings);
+		public NetherFlowerBlock(RegistryEntry<StatusEffect> suspicious_stew_effect, int effect_duration, Settings settings) {
+			super(suspicious_stew_effect.value(), effect_duration, settings);
 		}
 
 		#if MC_VERSION >= MC_1_20_3
-			public StatusEffect suspicious_stew_effect() {
-				return this.getStewEffects().get(0).effect();
+			public RegistryEntry<StatusEffect> suspicious_stew_effect() {
+				return this.getStewEffects().get(0).effect().getRegistryEntry();
 			}
 
 			public int effect_duration() {

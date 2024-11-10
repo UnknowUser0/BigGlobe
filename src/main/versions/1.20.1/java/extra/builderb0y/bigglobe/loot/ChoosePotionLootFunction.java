@@ -10,6 +10,7 @@ import net.minecraft.loot.function.ConditionalLootFunction;
 import net.minecraft.loot.function.LootFunctionType;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionUtil;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.JsonHelper;
 
 import builderb0y.autocodec.annotations.AddPseudoField;
@@ -26,9 +27,9 @@ public class ChoosePotionLootFunction extends ConditionalLootFunction {
 
 	public static final Serializer SERIALIZER = new Serializer();
 
-	public final IRandomList<@UseName("potion") Potion> potions;
+	public final IRandomList<@UseName("potion") RegistryEntry<Potion>> potions;
 
-	public ChoosePotionLootFunction(LootCondition[] conditions, IRandomList<Potion> potions) {
+	public ChoosePotionLootFunction(LootCondition[] conditions, IRandomList<RegistryEntry<Potion>> potions) {
 		super(conditions);
 		this.potions = potions;
 	}
@@ -39,7 +40,7 @@ public class ChoosePotionLootFunction extends ConditionalLootFunction {
 
 	@Override
 	public ItemStack process(ItemStack stack, LootContext context) {
-		PotionUtil.setPotion(stack, this.potions.getRandomElement(context.getRandom().nextLong()));
+		PotionUtil.setPotion(stack, this.potions.getRandomElement(context.getRandom().nextLong()).value());
 		return stack;
 	}
 
@@ -50,9 +51,9 @@ public class ChoosePotionLootFunction extends ConditionalLootFunction {
 
 	public static class Serializer extends ConditionalLootFunction.Serializer<ChoosePotionLootFunction> {
 
-		public static final AutoCoder<IRandomList<Potion>> POTION_LIST = (
+		public static final AutoCoder<IRandomList<RegistryEntry<Potion>>> POTION_LIST = (
 			BigGlobeAutoCodec.AUTO_CODEC.createCoder(
-				new ReifiedType<IRandomList<@UseName("potion") Potion>>() {}
+				new ReifiedType<IRandomList<@UseName("potion") RegistryEntry<Potion>>>() {}
 			)
 		);
 
@@ -65,7 +66,7 @@ public class ChoosePotionLootFunction extends ConditionalLootFunction {
 		@Override
 		public ChoosePotionLootFunction fromJson(JsonObject json, JsonDeserializationContext context, LootCondition[] conditions) {
 			JsonArray potionsJson = JsonHelper.getArray(json, "potions");
-			IRandomList<Potion> potions;
+			IRandomList<RegistryEntry<Potion>> potions;
 			try {
 				potions = BigGlobeAutoCodec.AUTO_CODEC.decode(POTION_LIST, potionsJson, JsonOps.INSTANCE);
 			}

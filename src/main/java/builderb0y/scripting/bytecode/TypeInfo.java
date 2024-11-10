@@ -299,15 +299,25 @@ public class TypeInfo {
 	}
 
 	public String getSimpleName() {
-		String name = this.getInternalName();
-		int start = name.length();
-		for (char c; --start >= 0 && (c = name.charAt(start)) != '/' && c != '$';);
-		return name.substring(start + 1);
+		if (this.isPrimitive()) {
+			return this.getSort().name().toLowerCase(Locale.ROOT);
+		}
+		else {
+			String name = this.getInternalName();
+			int start = name.length();
+			for (char c; --start >= 0 && (c = name.charAt(start)) != '/' && c != '$'; ) ;
+			return name.substring(start + 1);
+		}
 	}
 
 	public String getSimpleClassName() {
-		String internalName = this.getInternalName();
-		return internalName.substring(internalName.lastIndexOf('/') + 1);
+		if (this.isPrimitive()) {
+			return this.getSort().name().toLowerCase(Locale.ROOT);
+		}
+		else {
+			String internalName = this.getInternalName();
+			return internalName.substring(internalName.lastIndexOf('/') + 1);
+		}
 	}
 
 	public int getOpcode(int base) {

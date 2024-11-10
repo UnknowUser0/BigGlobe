@@ -94,7 +94,7 @@ public class ScriptedColumnBiomeSource extends BiomeSource {
 			return this.script.get(column, y << 2).entry;
 		}
 		else {
-			return BigGlobeMod.getRegistry(RegistryKeys.BIOME).getEntry(BiomeKeys.PLAINS);
+			return BigGlobeMod.getRegistry(RegistryKeys.BIOME).requireEntry(BiomeKeys.PLAINS);
 		}
 	}
 }

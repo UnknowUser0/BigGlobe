@@ -37,7 +37,7 @@ public class BlazingBlossomBlock extends NetherFlowerBlock {
 		}
 	#else
 
-		public BlazingBlossomBlock(StatusEffect suspicious_stew_effect, int effect_duration, Settings settings) {
+		public BlazingBlossomBlock(RegistryEntry<StatusEffect> suspicious_stew_effect, int effect_duration, Settings settings) {
 			super(suspicious_stew_effect, effect_duration, settings);
 		}
 	#endif

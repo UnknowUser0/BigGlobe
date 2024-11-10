@@ -30,6 +30,7 @@ public class ResampleGridTest {
 
 	static {
 		Grid.TESTING.setTrue();
+		NumberArray.Manager.Testing.TESTING = true;
 	}
 
 	@Test

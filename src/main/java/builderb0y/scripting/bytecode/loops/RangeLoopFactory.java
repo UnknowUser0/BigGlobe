@@ -44,7 +44,7 @@ public class RangeLoopFactory implements LoopFactory {
 			}
 			LazyVarInfo lowerBoundVariable = this.lowerBound.getConstantValue().isConstant() ? null : new LazyVarInfo(parser.method.mangleName("lowerBound"), this.lowerBound.getTypeInfo());
 			LazyVarInfo upperBoundVariable = this.upperBound.getConstantValue().isConstant() ? null : new LazyVarInfo(parser.method.mangleName("upperBound"), this.upperBound.getTypeInfo());
-			LazyVarInfo stepVariable = this.lowerBound.getConstantValue().isConstant() ? null : new LazyVarInfo(parser.method.mangleName("step"), this.lowerBound.getTypeInfo());
+			LazyVarInfo stepVariable = this.step.getConstantValue().isConstant() ? null : new LazyVarInfo(parser.method.mangleName("step"), this.step.getTypeInfo());
 			body = switch (this.lowerBound.getTypeInfo().getSort()) {
 				case INT -> new ForIntRangeInsnTree(
 					loopName,

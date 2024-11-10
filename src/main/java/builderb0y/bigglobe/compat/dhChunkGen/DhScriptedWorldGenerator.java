@@ -93,7 +93,7 @@ public class DhScriptedWorldGenerator implements IDhApiWorldGenerator {
 				ScriptedColumn[] columns = this.getColumns(totalColumns);
 				IDhApiBiomeWrapper biome = DhApi.Delayed.wrapperFactory.getBiomeWrapper(
 					new Object[] {
-						RegistryVersions.getObject(
+						RegistryVersions.getEntry(
 							this
 							.serverWorld
 							.getRegistryManager(),

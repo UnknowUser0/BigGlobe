@@ -22,7 +22,7 @@ import builderb0y.bigglobe.BigGlobeMod;
 @Mixin(JsonDataLoader.class)
 public class JsonDataLoader_BackwardsCompatibleRecipes {
 
-	@ModifyExpressionValue(method = "load", at = @At(value = "INVOKE", target = "Lcom/google/gson/JsonParser;parseReader(Ljava/io/Reader;)Lcom/google/gson/JsonElement;"))
+	@ModifyExpressionValue(method = "load", at = @At(value = "INVOKE", target = "Lcom/google/gson/JsonParser;parseReader(Ljava/io/Reader;)Lcom/google/gson/JsonElement;", remap = false))
 	private static JsonElement bigglobe_portRecipes(
 		JsonElement original,
 		@Local(argsOnly = true) Codec<?> codec,

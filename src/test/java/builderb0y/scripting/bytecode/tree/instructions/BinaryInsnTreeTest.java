@@ -1,5 +1,6 @@
 package builderb0y.scripting.bytecode.tree.instructions;
 
+import java.util.concurrent.ForkJoinPool;
 import java.util.function.Consumer;
 
 import org.apache.commons.lang3.function.FailableSupplier;
@@ -8,6 +9,8 @@ import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.opentest4j.AssertionFailedError;
 
+import builderb0y.autocodec.util.AutoCodecUtil;
+import builderb0y.bigglobe.util.AsyncRunner;
 import builderb0y.scripting.ScriptInterfaces.*;
 import builderb0y.scripting.environments.MutableScriptEnvironment;
 import builderb0y.scripting.parsing.ScriptClassLoader;
@@ -47,6 +50,18 @@ public class BinaryInsnTreeTest extends OperatorTest {
 	};
 
 	@Test
+	public void testAllConcurrent() {
+		try (AsyncRunner runner = new AsyncRunner(ForkJoinPool.commonPool())) {
+			runner.submit(() -> { try { this.testIntInt      (); } catch (Throwable throwable) { AutoCodecUtil.rethrow(throwable); }});
+			runner.submit(() -> { try { this.testLongInt     (); } catch (Throwable throwable) { AutoCodecUtil.rethrow(throwable); }});
+			runner.submit(() -> { try { this.testLongLong    (); } catch (Throwable throwable) { AutoCodecUtil.rethrow(throwable); }});
+			runner.submit(() -> { try { this.testFloatInt    (); } catch (Throwable throwable) { AutoCodecUtil.rethrow(throwable); }});
+			runner.submit(() -> { try { this.testFloatFloat  (); } catch (Throwable throwable) { AutoCodecUtil.rethrow(throwable); }});
+			runner.submit(() -> { try { this.testDoubleInt   (); } catch (Throwable throwable) { AutoCodecUtil.rethrow(throwable); }});
+			runner.submit(() -> { try { this.testDoubleDouble(); } catch (Throwable throwable) { AutoCodecUtil.rethrow(throwable); }});
+		}
+	}
+
 	public void testIntInt() throws ScriptParsingException {
 		System.out.println("TESTING INT INT");
 		for (String operator : INT_INT_OPERATORS) {
@@ -98,7 +113,6 @@ public class BinaryInsnTreeTest extends OperatorTest {
 		}
 	}
 
-	@Test
 	public void testLongLong() throws ScriptParsingException {
 		System.out.println("TESTING LONG LONG");
 		for (String operator : LONG_LONG_OPERATORS) {
@@ -150,7 +164,6 @@ public class BinaryInsnTreeTest extends OperatorTest {
 		}
 	}
 
-	@Test
 	public void testLongInt() throws ScriptParsingException {
 		System.out.println("TESTING LONG INT");
 		for (String operator : LONG_INT_OPERATORS) {
@@ -174,7 +187,6 @@ public class BinaryInsnTreeTest extends OperatorTest {
 		}
 	}
 
-	@Test
 	public void testFloatFloat() throws ScriptParsingException {
 		System.out.println("TESTING FLOAT FLOAT");
 		for (String operator : FLOAT_FLOAT_OPERATORS) {
@@ -198,7 +210,6 @@ public class BinaryInsnTreeTest extends OperatorTest {
 		}
 	}
 
-	@Test
 	public void testFloatInt() throws ScriptParsingException {
 		System.out.println("TESTING FLOAT INT");
 		for (String operator : FLOAT_INT_OPERATORS) {
@@ -222,7 +233,6 @@ public class BinaryInsnTreeTest extends OperatorTest {
 		}
 	}
 
-	@Test
 	public void testDoubleDouble() throws ScriptParsingException {
 		System.out.println("TESTING DOUBLE DOUBLE");
 		for (String operator : DOUBLE_DOUBLE_OPERATORS) {
@@ -246,7 +256,6 @@ public class BinaryInsnTreeTest extends OperatorTest {
 		}
 	}
 
-	@Test
 	public void testDoubleInt() throws ScriptParsingException {
 		System.out.println("TESTING DOUBLE INT");
 		for (String operator : DOUBLE_INT_OPERATORS) {

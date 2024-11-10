@@ -32,7 +32,6 @@ public class ColumnCompileContext extends DataCompileContext {
 	public final Map<AccessSchema, AccessContext> accessSchemaTypeInfos = new HashMap<>(16);
 	public final Map<ColumnEntry, ColumnEntryMemory> memories;
 
-
 	public ColumnCompileContext(ColumnEntryRegistry registry) {
 		super(null);
 		this.registry = registry;

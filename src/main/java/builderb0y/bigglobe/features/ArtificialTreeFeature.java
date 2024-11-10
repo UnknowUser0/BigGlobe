@@ -23,6 +23,7 @@ import builderb0y.bigglobe.blocks.BlockStates;
 import builderb0y.bigglobe.chunkgen.BigGlobeScriptedChunkGenerator;
 import builderb0y.bigglobe.codecs.BigGlobeAutoCodec;
 import builderb0y.bigglobe.columns.scripted.ColumnEntryRegistry;
+import builderb0y.bigglobe.columns.scripted.ColumnEntryRegistry.CompileTiming;
 import builderb0y.bigglobe.columns.scripted.ScriptedColumn;
 import builderb0y.bigglobe.columns.scripted.ScriptedColumn.ColumnUsage;
 import builderb0y.bigglobe.columns.scripted.ScriptedColumn.Hints;
@@ -211,8 +212,8 @@ public class ArtificialTreeFeature extends Feature<ArtificialTreeFeature.Config>
 			}
 
 			@Override
-			public boolean requiresColumns() {
-				return false;
+			public CompileTiming compileTiming() {
+				return CompileTiming.INSTANT;
 			}
 
 			@Override

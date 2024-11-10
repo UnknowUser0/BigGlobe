@@ -337,7 +337,7 @@ public class BigGlobeBlocks {
 	public static final BlazingBlossomBlock BLAZING_BLOSSOM = register(
 		"blazing_blossom",
 		new BlazingBlossomBlock(
-			StatusEffects.FIRE_RESISTANCE,
+			StatusEffects.FIRE_RESISTANCE.getRegistryEntry(),
 			8,
 			AbstractBlock.Settings
 			.create()
@@ -353,7 +353,7 @@ public class BigGlobeBlocks {
 	public static final NetherFlowerBlock GLOWING_GOLDENROD = register(
 		"glowing_goldenrod",
 		new NetherFlowerBlock(
-			StatusEffects.GLOWING,
+			StatusEffects.GLOWING.getRegistryEntry(),
 			8,
 			AbstractBlock.Settings
 			.create()

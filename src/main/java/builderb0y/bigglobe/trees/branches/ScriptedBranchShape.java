@@ -4,6 +4,7 @@ import java.util.random.RandomGenerator;
 
 import builderb0y.autocodec.annotations.Wrapper;
 import builderb0y.bigglobe.columns.scripted.ColumnEntryRegistry;
+import builderb0y.bigglobe.columns.scripted.ColumnEntryRegistry.CompileTiming;
 import builderb0y.bigglobe.scripting.ScriptHolder;
 import builderb0y.bigglobe.scripting.environments.RandomScriptEnvironment;
 import builderb0y.bigglobe.scripting.environments.StatelessRandomScriptEnvironment;
@@ -43,8 +44,8 @@ public interface ScriptedBranchShape extends Script {
 		}
 
 		@Override
-		public boolean requiresColumns() {
-			return false;
+		public CompileTiming compileTiming() {
+			return CompileTiming.INSTANT;
 		}
 
 		@Override

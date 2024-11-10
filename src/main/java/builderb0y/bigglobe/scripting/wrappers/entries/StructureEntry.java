@@ -27,7 +27,7 @@ public class StructureEntry extends EntryWrapper<Structure, StructureTag> {
 
 	public StructureEntry(RegistryEntry<Structure> entry) {
 		super(entry);
-		this.validBiomes = new BiomeTag(new DelayedEntryList<>(RegistryKeys.BIOME, entry.value().getValidBiomes()));
+		this.validBiomes = new BiomeTag(new DelayedEntryList<>(BigGlobeMod.getRegistry(RegistryKeys.BIOME), entry.value().getValidBiomes()));
 		this.step = entry.value().getFeatureGenerationStep();
 		this.type = new StructureTypeEntry(
 			RegistryVersions.getEntry(

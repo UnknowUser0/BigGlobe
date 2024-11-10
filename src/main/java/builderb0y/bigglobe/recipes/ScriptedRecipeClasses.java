@@ -10,6 +10,7 @@ import builderb0y.autocodec.annotations.Wrapper;
 import builderb0y.autocodec.coders.AutoCoder;
 import builderb0y.bigglobe.codecs.BigGlobeAutoCodec;
 import builderb0y.bigglobe.columns.scripted.ColumnEntryRegistry;
+import builderb0y.bigglobe.columns.scripted.ColumnEntryRegistry.CompileTiming;
 import builderb0y.bigglobe.scripting.ScriptHolder;
 import builderb0y.bigglobe.scripting.environments.CraftingGridScriptEnvironment;
 import builderb0y.bigglobe.scripting.environments.ItemScriptEnvironment;
@@ -68,8 +69,8 @@ public class ScriptedRecipeClasses {
 			}
 
 			@Override
-			public boolean requiresColumns() {
-				return false;
+			public CompileTiming compileTiming() {
+				return CompileTiming.INSTANT;
 			}
 
 			@Override
@@ -112,8 +113,8 @@ public class ScriptedRecipeClasses {
 			}
 
 			@Override
-			public boolean requiresColumns() {
-				return false;
+			public CompileTiming compileTiming() {
+				return CompileTiming.INSTANT;
 			}
 
 			@Override
@@ -159,8 +160,8 @@ public class ScriptedRecipeClasses {
 			}
 
 			@Override
-			public boolean requiresColumns() {
-				return false;
+			public CompileTiming compileTiming() {
+				return CompileTiming.INSTANT;
 			}
 
 			@Override

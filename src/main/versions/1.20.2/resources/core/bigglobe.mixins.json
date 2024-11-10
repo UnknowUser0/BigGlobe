@@ -88,6 +88,7 @@
 		"Dev_CreateWorldScreen_DontCrashOnFailure",
 		"InGameHud_DebugHudGetter",
 		"MinecraftClient_SetWorldEvent",
+		"MinecraftClient_ResetColumnEntryRegistryWhenSelectingAWorld",
 		"Sodium_WorldSlice_UseNoiseInBigGlobeWorlds"
 	],
 	"injectors": {

@@ -480,13 +480,13 @@ public class FlowTest extends TestCommon {
 											if (descending) scriptBuilder.append('-');
 											scriptBuilder.append("range");
 											scriptBuilder.append(lowerBoundInclusive ? '[' : '(');
-											scriptBuilder.append(lowerBoundVariable ? "lowerBound" : "" + lowerBound + suffix);
+											scriptBuilder.append(lowerBoundVariable ? "lowerBound" : "" + lowerBound + (isFloat ? ".0" : "") + suffix);
 											scriptBuilder.append(", ");
-											scriptBuilder.append(upperBoundVariable ? "upperBound" : "" + UpperBound + suffix);
+											scriptBuilder.append(upperBoundVariable ? "upperBound" : "" + UpperBound + (isFloat ? ".0" : "") + suffix);
 											scriptBuilder.append(upperBoundInclusive ? ']' : ')');
 											if (step != Step.NONE) {
 												scriptBuilder.append(" % ");
-												scriptBuilder.append(step == Step.VARIABLE ? "step" : "2" + suffix);
+												scriptBuilder.append(step == Step.VARIABLE ? "step" : "2" + (isFloat ? ".0" : "") + suffix);
 											}
 											scriptBuilder.append(": list.add(number))\nlist");
 
@@ -512,13 +512,13 @@ public class FlowTest extends TestCommon {
 											if (descending) scriptBuilder.append('-');
 											scriptBuilder.append("range");
 											scriptBuilder.append(lowerBoundInclusive ? '[' : '(');
-											scriptBuilder.append(lowerBoundVariable ? "lowerBound" : "" + lowerBound + suffix);
+											scriptBuilder.append(lowerBoundVariable ? "lowerBound" : "" + lowerBound + (isFloat ? ".0" : "") + suffix);
 											scriptBuilder.append(", ");
-											scriptBuilder.append(upperBoundVariable ? "upperBound" : "" + UpperBound + suffix);
+											scriptBuilder.append(upperBoundVariable ? "upperBound" : "" + UpperBound + (isFloat ? ".0" : "") + suffix);
 											scriptBuilder.append(upperBoundInclusive ? ']' : ')');
 											if (step != Step.NONE) {
 												scriptBuilder.append(" % ");
-												scriptBuilder.append(step == Step.VARIABLE ? "step" : "2" + suffix);
+												scriptBuilder.append(step == Step.VARIABLE ? "step" : "2" + (isFloat ? ".0" : "") + suffix);
 											}
 											scriptBuilder.append(": continue())\ntrue");
 

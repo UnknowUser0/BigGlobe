@@ -86,13 +86,13 @@ public class TestCommon {
 	@SuppressWarnings("deprecation")
 	public static void runTestWithTimeLimit(long miliseconds, ThrowingRunnable<Throwable> test) {
 		Thread[] threads = new Thread[2];
-		StackTraceElement[][] stackTrace = new StackTraceElement[1][];
+		Throwable[] stackTrace = new Throwable[1];
 		threads[0] = new Thread(() -> {
 			try {
 				test.run();
 			}
 			catch (Throwable throwable) {
-				throw AutoCodecUtil.rethrow(throwable);
+				stackTrace[0] = throwable;
 			}
 			finally {
 				threads[1].interrupt();
@@ -101,7 +101,9 @@ public class TestCommon {
 		threads[1] = new Thread(() -> {
 			try {
 				Thread.sleep(miliseconds);
-				stackTrace[0] = threads[0].getStackTrace();
+				Throwable throwable = new AssertionFailedError("Infinite loop");
+				throwable.setStackTrace(threads[0].getStackTrace());
+				stackTrace[0] = throwable;
 				threads[0].stop();
 			}
 			catch (InterruptedException expected) {}
@@ -116,9 +118,7 @@ public class TestCommon {
 			throw new RuntimeException("who interrupted the junit thread?", exception);
 		}
 		if (stackTrace[0] != null) {
-			AssertionFailedError error = new AssertionFailedError("Infinite loop");
-			error.setStackTrace(stackTrace[0]);
-			throw error;
+			throw AutoCodecUtil.rethrow(stackTrace[0]);
 		}
 	}
 }

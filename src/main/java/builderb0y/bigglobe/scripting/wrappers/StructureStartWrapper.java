@@ -9,6 +9,7 @@ import net.minecraft.structure.StructureStart;
 import net.minecraft.util.math.BlockBox;
 import net.minecraft.world.gen.structure.Structure;
 
+import builderb0y.bigglobe.BigGlobeMod;
 import builderb0y.bigglobe.scripting.wrappers.entries.StructureEntry;
 import builderb0y.bigglobe.scripting.wrappers.tags.BiomeTag;
 import builderb0y.bigglobe.structures.DelegatingStructure;
@@ -53,7 +54,7 @@ public record StructureStartWrapper(
 				entry,
 				new BiomeTag(
 					new DelayedEntryList<>(
-						RegistryKeys.BIOME,
+						BigGlobeMod.getRegistry(RegistryKeys.BIOME),
 						original.value().getValidBiomes()
 					)
 				),

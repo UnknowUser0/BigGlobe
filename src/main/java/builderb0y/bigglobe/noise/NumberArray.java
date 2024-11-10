@@ -1100,6 +1100,17 @@ public class NumberArray implements AutoCloseable {
 
 	public static class Manager {
 
+		public static class Testing {
+
+			//enabled by junit.
+			public static boolean TESTING = false;
+
+			public static void log(String message) {
+				if (TESTING) System.out.println(message);
+				else BigGlobeMod.LOGGER.info(message);
+			}
+		}
+
 		public static final String
 			MIN_PROP = "bigglobe.NumberArray.Direct.minSize",
 			MAX_PROP = "bigglobe.NumberArray.Direct.maxSize";
@@ -1119,13 +1130,13 @@ public class NumberArray implements AutoCloseable {
 				for (int alignment : new int[] { 8, 4, 2, 1 }) {
 					try {
 						firstAlignedIndex = -buffer.alignmentOffset(0, alignment) & (alignment - 1);
-						BigGlobeMod.LOGGER.info("Got first aligned index " + firstAlignedIndex + " for alignment " + alignment);
+						Testing.log("Got first aligned index " + firstAlignedIndex + " for alignment " + alignment);
 						break got;
 					}
 					catch (Exception ignored) {}
 				}
 				firstAlignedIndex = 0;
-				BigGlobeMod.LOGGER.info("Failed to get alignment index. Assuming 0.");
+				Testing.log("Failed to get alignment index. Assuming 0.");
 			}
 			FIRST_ALIGNED_INDEX = firstAlignedIndex;
 		}

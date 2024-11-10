@@ -14,6 +14,7 @@ import net.minecraft.util.math.Vec3d;
 
 import builderb0y.bigglobe.BigGlobeMod;
 import builderb0y.bigglobe.entities.WaypointEntity.Orbit;
+import builderb0y.bigglobe.hyperspace.HyperspaceRendering;
 import builderb0y.bigglobe.math.BigGlobeMath;
 
 @Environment(EnvType.CLIENT)
@@ -102,6 +103,9 @@ public class WaypointEntityRenderer extends BigGlobeEntityRenderer<WaypointEntit
 				;
 			}
 		}
+		#if MC_VERSION < MC_1_21_2
+			HyperspaceRendering.markWaypointVisible(state.x, state.y, state.z, state.age, state.health);
+		#endif
 	}
 
 	#if MC_VERSION < MC_1_20_4

@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryOps;
 
 import builderb0y.autocodec.annotations.SingletonArray;
 import builderb0y.autocodec.coders.AutoCoder;
@@ -17,7 +18,9 @@ import builderb0y.autocodec.decoders.DecodeException;
 import builderb0y.autocodec.encoders.EncodeContext;
 import builderb0y.autocodec.encoders.EncodeException;
 import builderb0y.autocodec.reflection.reification.ReifiedType;
+import builderb0y.bigglobe.BigGlobeMod;
 import builderb0y.bigglobe.codecs.BigGlobeAutoCodec;
+import builderb0y.bigglobe.dynamicRegistries.BetterRegistry;
 import builderb0y.bigglobe.util.DelayedEntry;
 import builderb0y.bigglobe.util.DelayedEntryList;
 
@@ -35,7 +38,7 @@ public class DelayedEntryListCoder<T> extends NamedCoder<DelayedEntryList<T>> {
 	public @Nullable <T_Encoded> DelayedEntryList<T> decode(@NotNull DecodeContext<T_Encoded> context) throws DecodeException {
 		if (context.isEmpty()) return null;
 		return new DelayedEntryList<>(
-			this.registryKey,
+			AbstractRegistryCoder.registry(this.registryKey, context),
 			context.decodeWith(DelayedCoders.LIST_CODER)
 		);
 	}
