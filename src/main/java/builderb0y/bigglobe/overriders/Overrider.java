@@ -41,7 +41,7 @@ public sealed interface Overrider permits ColumnValueOverrider.Entry, StructureO
 			return type.coder;
 		}
 	};
-	public static Object SETUP = new Object() {{
+	public static final Object INITIALIZER = new Object() {{
 		CommonLifecycleEvents.TAGS_LOADED.register((DynamicRegistryManager registries, boolean client) -> {
 			if (!client) {
 				RegistryVersions
@@ -72,13 +72,13 @@ public sealed interface Overrider permits ColumnValueOverrider.Entry, StructureO
 
 	public static class SortedOverriders {
 
-		public final StructureOverrider.Holder[] structures;
+		public final StructureOverrider.Entry[] structures;
 		public final ColumnValueOverrider.Holder[] rawColumnValues, featureColumnValues;
 		public final String[] rawColumnValueDependencies, featureColumnValueDependencies;
 
 		public SortedOverriders(BigGlobeScriptedChunkGenerator generator) {
 			Map<Type, List<Overrider>> map = generator.overriders.objectStream().collect(Collectors.groupingBy(Overrider::getOverriderType));
-			this.structures = map.getOrDefault(Type.STRUCTURE, Collections.emptyList()).stream().map(StructureOverrider.Entry.class::cast).map(StructureOverrider.Entry::script).toArray(StructureOverrider.Holder[]::new);
+			this.structures = map.getOrDefault(Type.STRUCTURE, Collections.emptyList()).stream().map(StructureOverrider.Entry.class::cast).toArray(StructureOverrider.Entry[]::new);
 			this.rawColumnValues = map.getOrDefault(Type.COLUMN_VALUE, Collections.emptyList()).stream().map(ColumnValueOverrider.Entry.class::cast).filter(ColumnValueOverrider.Entry::raw_generation).map(ColumnValueOverrider.Entry::script).toArray(ColumnValueOverrider.Holder[]::new);
 			this.featureColumnValues = map.getOrDefault(Type.COLUMN_VALUE, Collections.emptyList()).stream().map(ColumnValueOverrider.Entry.class::cast).filter(ColumnValueOverrider.Entry::feature_generation).map(ColumnValueOverrider.Entry::script).toArray(ColumnValueOverrider.Holder[]::new);
 			this.rawColumnValueDependencies = this.extractDependencies(this.rawColumnValues, generator);

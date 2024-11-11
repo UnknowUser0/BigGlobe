@@ -11,10 +11,13 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.entry.RegistryEntryList;
 import net.minecraft.structure.*;
 import net.minecraft.structure.StructureSet.WeightedEntry;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockBox;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.ChunkSectionPos;
@@ -38,7 +41,14 @@ import builderb0y.bigglobe.util.UnregisteredObjectException;
 
 public class StructureManager {
 
+	//public static final boolean DEBUG_REMOVED = false;
+	//public static final List<PotentialStructure> POTENTIAL_STRUCTURES = DEBUG_REMOVED ? new ArrayList<>() : null;
+
 	public final WorldUngeneratedStructures worldUngeneratedStructures = new WorldUngeneratedStructures(60_000);
+
+	public StructureManager() {
+		//POTENTIAL_STRUCTURES.clear();
+	}
 
 	public static record StructureGenerationParams(
 		BigGlobeScriptedChunkGenerator generator,
@@ -89,6 +99,26 @@ public class StructureManager {
 		}
 	}
 
+	public static RegistryKey<Structure> structureKey(Structure structure) {
+		return BigGlobeMod.getCurrentServer().getRegistryManager().get(RegistryKeys.STRUCTURE).getKey(structure).orElseThrow();
+	}
+
+	public static Identifier structureID(Structure structure) {
+		return structureKey(structure).getValue();
+	}
+
+	public static String structureName(Structure structure) {
+		return structureID(structure).toString();
+	}
+
+	/*
+	public static void addPotentialStructure(StructureStart start, String failureReason) {
+		if (structureName(start.getStructure()).endsWith("village_plains")) {
+			POTENTIAL_STRUCTURES.add(new PotentialStructure(start, failureReason));
+		}
+	}
+	*/
+
 	public synchronized void setStructureStarts(StructureGenerationParams params, Chunk chunk) {
 		if (!chunk.getStructureStarts().isEmpty()) {
 			BigGlobeMod.LOGGER.warn(chunk + " already has structure starts");
@@ -111,6 +141,11 @@ public class StructureManager {
 			}
 			Map<Structure, StructureStart> map = new HashMap<>(toAdd.size());
 			for (SortedStructurePieces pieces : toAdd) {
+				/*
+				if (DEBUG_REMOVED) {
+					addPotentialStructure(pieces.getStart(), null);
+				}
+				*/
 				//System.out.println("Survivor: " + toString(pieces.getStart()));
 				map.merge(pieces.getStart().getStructure(), pieces.getStart(), (StructureStart start1, StructureStart start2) -> {
 					//todo: handle multiple of the same structure in the same chunk.
@@ -250,6 +285,11 @@ public class StructureManager {
 				)
 			)
 		) {
+			/*
+			if (DEBUG_REMOVED) {
+				addPotentialStructure(newStart, "Incorrect biome");
+			}
+			*/
 			return SortedStructurePieces.EMPTY;
 		}
 		//expand structure bounding boxes so that overriders
@@ -335,6 +375,11 @@ public class StructureManager {
 				for (int largerIndex = smallerIndex; ++largerIndex < size;) {
 					SortedStructurePieces largerStructure = (SortedStructurePieces)(elements[largerIndex]);
 					if (SortedStructurePieces.intersects(smallerStructure, largerStructure)) {
+						/*
+						if (DEBUG_REMOVED) {
+							addPotentialStructure(smallerStructure.getStart(), "Collision");
+						}
+						*/
 						//System.out.println("Prevented self-intersection between " + StructureManager.toString(smallerStructure.getStart()) + " and " + StructureManager.toString(largerStructure.getStart()));
 						elements[smallerIndex] = null;
 						break;
@@ -356,6 +401,11 @@ public class StructureManager {
 					SortedStructurePieces largerStructure = other.get(largerIndex);
 					if (largerStructure.volume() >= smallerStructure.volume()) {
 						if (SortedStructurePieces.intersects(smallerStructure, largerStructure)) {
+							/*
+							if (DEBUG_REMOVED) {
+								addPotentialStructure(smallerStructure.getStart(), "Collision");
+							}
+							*/
 							//System.out.println("Prevented intersection between " + StructureManager.toString(smallerStructure.getStart()) + " and " + StructureManager.toString(largerStructure.getStart()));
 							elements[smallerIndex] = null;
 							break;
@@ -423,6 +473,10 @@ public class StructureManager {
 			assert maxX >= minX && maxY >= minY && maxZ >= minZ;
 			return (maxX - minX + 1) * (maxY - minY + 1) * (maxZ - minZ + 1);
 		}
+
+		public default String defaultToString() {
+			return structureName(this.getStart().getStructure()) + " at " + this.getStart().getBoundingBox();
+		}
 	}
 
 	public static class ChunkSortedStructurePieces extends Long2ObjectOpenHashMap<List<StructurePiece>> implements SortedStructurePieces {
@@ -481,6 +535,11 @@ public class StructureManager {
 		@Override
 		public int volume() {
 			return this.volume;
+		}
+
+		@Override
+		public String toString() {
+			return this.defaultToString();
 		}
 	}
 
@@ -549,5 +608,78 @@ public class StructureManager {
 		public int volume() {
 			return this.volume;
 		}
+
+		@Override
+		public String toString() {
+			return this.defaultToString();
+		}
 	}
+
+	/*
+	public static class PotentialStructure {
+
+		public final StructureStart start;
+		public final @Nullable String failureReason;
+		public final float brightness;
+
+		public PotentialStructure(StructureStart start, @Nullable String failureReason) {
+			this.start = start;
+			this.failureReason = failureReason;
+			this.brightness = (float)(Math.random() * 0.5D + 0.5D);
+		}
+
+		public void render(
+			MatrixStack matrices,
+			VertexConsumerProvider vertexConsumers,
+			double cameraX,
+			double cameraY,
+			double cameraZ
+		) {
+			BlockBox box = this.start.getBoundingBox();
+			this.drawBox(matrices, vertexConsumers, box, cameraX, cameraY, cameraZ);
+			//for (StructurePiece child : this.start.getChildren()) {
+			//	this.drawBox(matrices, vertexConsumers, child.getBoundingBox());
+			//}
+			if (this.failureReason != null) {
+				DebugRenderer.drawString(
+					matrices,
+					vertexConsumers,
+					structureName(this.start.getStructure()),
+					(box.getMinX() + box.getMaxX()) * 0.5D,
+					box.getMaxY() + 3.0D,
+					(box.getMinZ() + box.getMaxZ()) * 0.5D,
+					-1
+				);
+				DebugRenderer.drawString(
+					matrices,
+					vertexConsumers,
+					this.failureReason,
+					(box.getMinX() + box.getMaxX()) * 0.5D,
+					box.getMaxY() + 2.0D,
+					(box.getMinZ() + box.getMaxZ()) * 0.5D,
+					-1
+				);
+			}
+		}
+
+		public void drawBox(
+			MatrixStack matrices,
+			VertexConsumerProvider vertexConsumers,
+			BlockBox box,
+			double cameraX,
+			double cameraY,
+			double cameraZ
+		) {
+			DebugRenderer.drawBox(
+				matrices,
+				vertexConsumers,
+				Box.from(box).offset(-cameraX, -cameraY, -cameraZ),
+				this.failureReason != null ? this.brightness : 0.0F,
+				this.failureReason == null ? this.brightness : 0.0F,
+				0.0F,
+				0.25F
+			);
+		}
+	}
+	*/
 }

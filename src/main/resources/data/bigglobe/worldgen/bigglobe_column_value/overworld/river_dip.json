@@ -5,8 +5,9 @@
 		"is_3d": false
 	},
 	"script": [
-		"double dip = river_depth / (raw_rivers ^ 4 + 1.0L)",
-		"dip *= smooth((sea_level - 24.0L - raw_erosion) / river_depth)",
+		"double dip = unbounded_river_dip",
+		"dip = max(1.0L - dip, 0.0L) * river_depth",
+		"dip *= smooth((sea_level + river_water_depth - raw_erosion) / river_depth)",
 		"return(dip)"
 	]
 }

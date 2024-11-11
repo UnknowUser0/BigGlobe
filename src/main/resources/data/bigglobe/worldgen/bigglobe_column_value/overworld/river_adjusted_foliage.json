@@ -1,0 +1,13 @@
+{
+	"type": "script",
+	"params": {
+		"type": "float",
+		"is_3d": false
+	},
+	"script": [
+		"float foliage = raw_foliage",
+		"double dip = unbounded_river_dip",
+		"if (dip < 1.0L: foliage = min(foliage, 0.0I))",
+		"return(foliage)"
+	]
+}

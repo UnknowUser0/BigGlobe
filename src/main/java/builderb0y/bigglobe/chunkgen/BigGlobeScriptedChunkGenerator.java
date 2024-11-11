@@ -850,8 +850,13 @@ public class BigGlobeScriptedChunkGenerator extends ChunkGenerator implements De
 			)
 		);
 		StructureStartWrapper wrapper = StructureStartWrapper.of(entry, start);
-		for (StructureOverrider overrider : this.getOverriders().structures) {
-			if (!overrider.override(lookup, wrapper, permuter, this.columnSeed, hints)) {
+		for (StructureOverrider.Entry overrider : this.getOverriders().structures) {
+			if (!overrider.script().override(lookup, wrapper, permuter, this.columnSeed, hints)) {
+				/*
+				if (StructureManager.DEBUG_REMOVED) {
+					StructureManager.addPotentialStructure(start, "overrider " + BigGlobeMod.getCurrentServer().getRegistryManager().get(BigGlobeDynamicRegistries.OVERRIDER_REGISTRY_KEY).getId(overrider) + " said no.");
+				}
+				*/
 				return false;
 			}
 		}

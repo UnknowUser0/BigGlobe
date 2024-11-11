@@ -26,6 +26,7 @@ import builderb0y.bigglobe.noise.Grid2D;
 import builderb0y.bigglobe.noise.Grid3D;
 import builderb0y.bigglobe.noise.NumberArray;
 import builderb0y.bigglobe.noise.Permuter;
+import builderb0y.bigglobe.settings.Seed;
 import builderb0y.scripting.bytecode.MethodCompileContext;
 import builderb0y.scripting.bytecode.MethodInfo;
 import builderb0y.scripting.bytecode.tree.ConstantValue;
@@ -49,6 +50,7 @@ public class NoiseColumnEntry extends AbstractColumnEntry {
 
 	public final Grid2D grid2D;
 	public final Grid3D grid3D;
+	public final @Nullable Seed seed;
 
 	public NoiseColumnEntry(
 		AccessSchema params,
@@ -56,11 +58,13 @@ public class NoiseColumnEntry extends AbstractColumnEntry {
 		@DefaultBoolean(true) boolean cache,
 		Grid2D grid2D,
 		Grid3D grid3D,
+		@Nullable Seed seed,
 		DecodeContext<?> decodeContext
 	) {
 		super(params, valid, cache, decodeContext);
 		this.grid2D = grid2D;
 		this.grid3D = grid3D;
+		this.seed = seed;
 		if (!(params.type() instanceof FloatColumnValueType || params.type() instanceof DoubleColumnValueType)) {
 			throw new IllegalArgumentException("params for noise should be of type float or double.");
 		}
@@ -70,6 +74,10 @@ public class NoiseColumnEntry extends AbstractColumnEntry {
 	public void emitFieldGetterAndSetter(ColumnEntryMemory memory, DataCompileContext context) {
 		memory.putTyped(CONSTANT_GRID, ConstantValue.ofManual(this.is3D() ? this.grid3D : this.grid2D, type(this.is3D() ? Grid3D.class : Grid2D.class)));
 		super.emitFieldGetterAndSetter(memory, context);
+	}
+
+	public long getSeed(ColumnEntryMemory memory) {
+		return this.seed != null ? this.seed.value : Permuter.permute(0L, memory.getTyped(ColumnEntryMemory.ACCESSOR_ID));
 	}
 
 	@Override
@@ -93,7 +101,7 @@ public class NoiseColumnEntry extends AbstractColumnEntry {
 				.addFunction("seed", new FunctionHandler.Named("seed(long salt)", (ExpressionParser parser, String name, InsnTree... arguments) -> {
 					return new CastResult(context.loadSeed(arguments[0]), false);
 				}))
-				.addVariableConstant("salt", Permuter.permute(0L, memory.getTyped(ColumnEntryMemory.ACCESSOR_ID)))
+				.addVariableConstant("salt", this.getSeed(memory))
 				.addMethodInvoke(ScriptedColumn.INFO.x)
 				.addMethodInvoke(ScriptedColumn.INFO.z)
 				.addVariableRenamedGetField(context.loadSelf(), "valueField", memory.getTyped(ColumnEntryMemory.FIELD).info)
@@ -110,7 +118,7 @@ public class NoiseColumnEntry extends AbstractColumnEntry {
 	public void populateCompute2D(ColumnEntryMemory memory, DataCompileContext context, MethodCompileContext computeMethod) throws ScriptParsingException {
 		InsnTree x = ScriptedColumn.INFO.x(context.loadColumn());
 		InsnTree z = ScriptedColumn.INFO.z(context.loadColumn());
-		long salt = Permuter.permute(0L, memory.getTyped(ColumnEntryMemory.ACCESSOR_ID));
+		long salt = this.getSeed(memory);
 		InsnTree originalSeed = ScriptedColumn.INFO.baseSeed(context.loadColumn());
 		InsnTree saltedSeed = new BitwiseXorInsnTree(originalSeed, ldc(salt), LXOR);
 		InsnTree getValueInvoker = invokeInstance(ldc(memory.getTyped(CONSTANT_GRID)), MethodInfo.getMethod(this.is3D() ? Grid3D.class : Grid2D.class, "getValue"), saltedSeed, x, z);
@@ -131,7 +139,7 @@ public class NoiseColumnEntry extends AbstractColumnEntry {
 				.addMethodInvoke(this.is3D() ? Grid3D.class : Grid2D.class, "getValue")
 				.addVariable("column", context.loadColumn())
 				.addFieldInvoke("seed", ScriptedColumn.INFO.baseSeed)
-				.addVariableConstant("salt", Permuter.permute(0L, memory.getTyped(ColumnEntryMemory.ACCESSOR_ID)))
+				.addVariableConstant("salt", this.getSeed(memory))
 				.addFieldInvoke(ScriptedColumn.INFO.x)
 				.addVariableLoad("y", TypeInfos.INT)
 				.addFieldInvoke(ScriptedColumn.INFO.z)
@@ -148,6 +156,7 @@ public class NoiseColumnEntry extends AbstractColumnEntry {
 		public final AutoCoder<Boolean> cache;
 		public final AutoCoder<Grid2D> grid2D;
 		public final AutoCoder<Grid3D> grid3D;
+		public final AutoCoder<Seed> seed;
 
 		public Coder(FactoryContext<NoiseColumnEntry> context) {
 			super(context.type);
@@ -156,6 +165,7 @@ public class NoiseColumnEntry extends AbstractColumnEntry {
 			this.cache  = context.type(new ReifiedType<@DefaultBoolean(true) Boolean>() {}).forceCreateCoder();
 			this.grid2D = context.type(ReifiedType.from(Grid2D.class)).forceCreateCoder();
 			this.grid3D = context.type(ReifiedType.from(Grid3D.class)).forceCreateCoder();
+			this.seed   = context.type(new ReifiedType<Seed>() {}).forceCreateCoder();
 		}
 
 		@Override
@@ -164,13 +174,15 @@ public class NoiseColumnEntry extends AbstractColumnEntry {
 			AccessSchema params = context.getMember("params").decodeWith(this.params);
 			Valid valid = context.getMember("valid").decodeWith(this.valid);
 			boolean cache = context.getMember("cache").decodeWith(this.cache);
+			DecodeContext<T_Encoded> encodedSeed = context.getMember("seed");
+			Seed seed = encodedSeed.isEmpty() ? null : encodedSeed.decodeWith(this.seed);
 			if (params.is_3d()) {
 				Grid3D grid = context.getMember("grid").decodeWith(this.grid3D);
-				return new NoiseColumnEntry(params, valid, cache, null, grid, context);
+				return new NoiseColumnEntry(params, valid, cache, null, grid, seed, context);
 			}
 			else {
 				Grid2D grid = context.getMember("grid").decodeWith(this.grid2D);
-				return new NoiseColumnEntry(params, valid, cache, grid, null, context);
+				return new NoiseColumnEntry(params, valid, cache, grid, null, seed, context);
 			}
 		}
 
@@ -188,6 +200,7 @@ public class NoiseColumnEntry extends AbstractColumnEntry {
 				? context.object(entry.grid3D).encodeWith(this.grid3D)
 				: context.object(entry.grid2D).encodeWith(this.grid2D)
 			);
+			if (entry.seed != null) map.put("seed", context.object(entry.seed).encodeWith(this.seed));
 			return context.createStringMap(map);
 		}
 	}

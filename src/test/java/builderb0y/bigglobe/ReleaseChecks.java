@@ -6,6 +6,7 @@ import builderb0y.bigglobe.chunkgen.BigGlobeScriptedChunkGenerator;
 import builderb0y.bigglobe.commands.DevDebugCommand;
 import builderb0y.bigglobe.features.SerializableBlockQueue;
 import builderb0y.bigglobe.items.BigGlobeItems;
+import builderb0y.bigglobe.structures.StructureManager;
 import builderb0y.bigglobe.util.Async;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -24,5 +25,6 @@ public class ReleaseChecks {
 		assertFalse(Async.DEBUG_SYNC);
 		assertFalse(SerializableBlockQueue.DEBUG_ALWAYS_SERIALIZE);
 		assertFalse(DevDebugCommand.ENABLED);
+		//assertFalse(StructureManager.DEBUG_REMOVED);
 	}
 }

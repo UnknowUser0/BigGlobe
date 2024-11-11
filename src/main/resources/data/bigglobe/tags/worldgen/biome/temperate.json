@@ -6,6 +6,9 @@
 		"bigglobe:temperate_plains",
 		"bigglobe:temperate_wasteland",
 		"bigglobe:cherry_forest",
-		"#bigglobe:swamps"
+		"bigglobe:cherry_plains",
+		"bigglobe:swamp_forest",
+		"bigglobe:swamp_plains",
+		"bigglobe:swamp_wasteland"
 	]
 }

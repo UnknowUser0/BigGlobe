@@ -27,10 +27,18 @@
 		"bigglobe:overworld/structure/ocean_ruin",
 		"bigglobe:overworld/structure/small_decorations",
 		"bigglobe:overworld/structure/stronghold",
-		"bigglobe:overworld/structure/surface_structure",
 		"bigglobe:overworld/structure/trial_chambers",
 		"bigglobe:overworld/structure/underground",
-		"bigglobe:overworld/structure/villages",
-		"bigglobe:overworld/structure/woodland_mansion"
+		"bigglobe:overworld/structure/woodland_mansion",
+
+		"bigglobe:overworld/structure/spillover/bigger_desert_pyramid",
+		"bigglobe:overworld/structure/spillover/desert_pyramid",
+		"bigglobe:overworld/structure/spillover/pillager_outpost",
+		"bigglobe:overworld/structure/spillover/trail_ruins",
+		"bigglobe:overworld/structure/spillover/village_desert",
+		"bigglobe:overworld/structure/spillover/village_plains",
+		"bigglobe:overworld/structure/spillover/village_snowy",
+		"bigglobe:overworld/structure/spillover/village_taiga",
+		"bigglobe:overworld/structure/spillover/woodland_mansion"
 	]
 }

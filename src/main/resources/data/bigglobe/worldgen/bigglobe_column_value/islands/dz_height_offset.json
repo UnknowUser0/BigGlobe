@@ -4,9 +4,9 @@
 		"type": "double",
 		"is_3d": false
 	},
+	"seed": "island_height_offset",
 	"grid": {
 		"type": "sum",
-		"salt": "island_height_offset",
 		"layers": [
 			{ "type": "dy_smoother_resample", "source": { "type": "white_noise", "amplitude": 97.65625 }, "scale": 512 },
 			{ "type": "dy_smoother_resample", "source": { "type": "white_noise", "amplitude": 39.0625  }, "scale": 256 },

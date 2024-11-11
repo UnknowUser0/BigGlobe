@@ -1,0 +1,12 @@
+{
+	"type": "script",
+	"params": {
+		"type": "double",
+		"is_3d": false
+	},
+	"script": [
+		"double dip = abs(raw_rivers)",
+		"dip += river_erosion * (0.375L - 0.375L / (dip ^ 2 + 1.0L))",
+		"return(dip)"
+	]
+}

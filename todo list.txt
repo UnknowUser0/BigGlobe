@@ -24,30 +24,17 @@ where I left off:
 		do islands need surface_temperature/foliage?
 		do islands need height_adjusted_temperature/foliage?
 	actual biomes for cave types?
-	make it so that casting NaN to int/long throws an ArithmeticException.
 
 to finish before release:
+	make it so that casting NaN to int/long throws an ArithmeticException.
 
 changelog:
-	# Changes for normal players:
-	* Ported to MC 1.21.3.
-	* Fixed compatibility with LambDynamicLights in MC 1.21.1.
-	* Gold, redstone, and lapis ore are now more common.
-	* Mega dungeons are now less common.
-	* The bogged mob now spawns in swamps.
-	* Structures should no longer collide with each other.
-	* Balls of string work goodly now and are less glitchy than before.
-	* By popular demand, added jappafied variants of a couple textures that stood out when not using programmer art.
-	* Fixed some holes in terrain with Distant Horizons and Voxy when using hyperspeed generation (you may need to reset your database though).
-	* Fixed crash when creating a world on some systems.
-	* Fixed a couple issues related to exiting hyperspace through unconventional means.
-	* Fixed voxy integration in MC 1.20.4 and 1.20.6.
-	* Removed the config option to grow saplings into big globe trees OUTSIDE of Big Globe worlds, because turns out it hasn't worked in a long time anyway and I never noticed.
-	* Added russian translation provided by "mpustovoi". I have no idea how accurate these translations are.
-	# Changes for data pack makers:
-	* All tags everywhere must be prefixed with `#` now, including in scripts.
-	* Added new "scripted" random source type.
-	* Data packs that rely on some of the unused ore chance templates now work correctly.
+	# Changes for normal players
+	* Revamped rivers, they are now bigger, rarer, and more eroded.
+	* Villages are now more common and more likely to have their spawn conditions met.
+	* Island noise is different in this version. Expect discontinuities across the boundary between old chunks and new chunks.
+	# Changes for data pack makers
+	* Added new way to ensure that two noise-typed column values use the same seed.
 
 alternate world presets:
 	paradise.
@@ -72,9 +59,6 @@ breaking changes I want to make:
 			owner <owner>
 			in <dimension>
 			near <x y z>
-	option to specify that a noise column entry should use the hashed world seed,
-		not the seed that's been xor'd with the permutation of the entry's ID.
-		or better yet, a "salt" field.
 	need to redo scripted noise which uses column values.
 	better error messages for referencing a column value which is enabled by a different voronoi settings,
 		or any voronoi settings in a root column context.
