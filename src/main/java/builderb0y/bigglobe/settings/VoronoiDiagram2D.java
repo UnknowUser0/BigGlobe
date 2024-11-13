@@ -10,8 +10,10 @@ import net.minecraft.util.crash.CrashReportSection;
 
 import builderb0y.autocodec.annotations.VerifyIntRange;
 import builderb0y.autocodec.annotations.VerifySorted;
+import builderb0y.autocodec.util.AutoCodecUtil;
 import builderb0y.bigglobe.math.BigGlobeMath;
 import builderb0y.bigglobe.noise.Permuter;
+import builderb0y.bigglobe.util.Derivative2D;
 import builderb0y.bigglobe.util.LinkedArrayList;
 
 import static builderb0y.bigglobe.math.BigGlobeMath.floorI;
@@ -285,27 +287,6 @@ public class VoronoiDiagram2D {
 				remaining = Math.max(remaining, 2);
 			}
 		}
-
-		/*
-		//old implementation:
-		ObjectLinkedOpenHashSet<LinkedArrayList.Node<AdjacentSeedPoint>> test = new ObjectLinkedOpenHashSet<>(adjacent.nodes(), 1.0F);
-		while (!test.isEmpty()) {
-			LinkedArrayList.Node<AdjacentSeedPoint> node = test.removeFirst();
-			LinkedArrayList.Node<AdjacentSeedPoint> prev = node.prev, next = node.next;
-			//cyclic list logic
-			if (prev == null) prev = adjacent.getLastNode();
-			if (next == null) next = adjacent.getFirstNode();
-			if (!isInsideCircumCircle(center, prev.element, node.element, next.element)) {
-				//remove the point
-				adjacent.removeNode(node);
-				//removing a point might cause the prev and next points
-				//to realize that they also don't belong here.
-				//so, re-add them to test so that we can test them again.
-				test.add(prev);
-				test.add(next);
-			}
-		}
-		*/
 		return new Cell(center, adjacent.toElementArray(new AdjacentSeedPoint[adjacent.size()]));
 	}
 
@@ -570,6 +551,33 @@ public class VoronoiDiagram2D {
 					distance = Math.max(distance, progress);
 				}
 				return distance * 2.0D;
+			}
+			catch (Throwable throwable) {
+				throw this.handleError(throwable, blockX, blockZ);
+			}
+		}
+
+		public void derivativeProgressToEdgeSquaredD(Derivative2D holder, int blockX, int blockZ) {
+			try {
+				long blockOffsetX = blockX - this.center.centerX;
+				long blockOffsetZ = blockZ - this.center.centerZ;
+				holder.set(1.0D);
+				for (AdjacentSeedPoint adjacent : this.adjacent) {
+					long cellOffsetX = adjacent.centerX - this.center.centerX;
+					long cellOffsetZ = adjacent.centerZ - this.center.centerZ;
+					double dotProduct = blockOffsetX * cellOffsetX + blockOffsetZ * cellOffsetZ;
+					if (dotProduct > 0.0D) {
+						double factor = BigGlobeMath.squareL(cellOffsetX, cellOffsetZ);
+						double progress = dotProduct * 2.0D / factor;
+						if (progress > 1.0D) {
+							throw new IllegalArgumentException("Position not inside cell");
+						}
+						double nextMultiplier = 1.0D - progress * progress;
+						double common = dotProduct * -8.0D / (factor * factor);
+						holder.mul(nextMultiplier, common * cellOffsetX, common * cellOffsetZ);
+					}
+				}
+				holder.subRev(1.0D);
 			}
 			catch (Throwable throwable) {
 				throw this.handleError(throwable, blockX, blockZ);

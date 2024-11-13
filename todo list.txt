@@ -26,15 +26,26 @@ where I left off:
 	actual biomes for cave types?
 
 to finish before release:
-	make it so that casting NaN to int/long throws an ArithmeticException.
+	document seed on noise-typed column values.
+	document dx and dz fields on voronoi data bases.
+		document d_soft_distance being NaN at the center point.
+	make surface Y level floor(surface height) instead of ceil().
+	rename cavern-related column values to deep dark.
+	make lakes able to place multiple features on surface.
+		use a tag.
+	allow script templates to provide default values for their inputs.
+	ensure StructureManager doesn't add structure references for chunks
+		which don't intersect any pieces of the referenced structure.
 
 changelog:
 	# Changes for normal players
+	* Fixed crash on startup on dedicated servers.
 	* Revamped rivers, they are now bigger, rarer, and more eroded.
 	* Villages are now more common and more likely to have their spawn conditions met.
 	* Island noise is different in this version. Expect discontinuities across the boundary between old chunks and new chunks.
 	# Changes for data pack makers
 	* Added new way to ensure that two noise-typed column values use the same seed.
+	* Added analytical derivatives of voronoi.soft_distance_squared and voronoi.soft_distance.
 
 alternate world presets:
 	paradise.

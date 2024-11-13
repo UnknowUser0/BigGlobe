@@ -64,20 +64,18 @@ public class BigGlobeEntityTypes {
 		4,
 		20
 	);
-	public static final EntityType<WaypointEntity> WAYPOINT = (
-		register(
-			"waypoint",
-			WaypointEntity::new,
-			SpawnGroup.MISC,
-			false,
-			false,
-			true,
-			true,
-			ImmutableSet.of(),
-			EntityDimensions.changing(2.0F, 2.0F),
-			8,
-			Integer.MAX_VALUE
-		)
+	public static final EntityType<WaypointEntity> WAYPOINT = register(
+		"waypoint",
+		WaypointEntity::new,
+		SpawnGroup.MISC,
+		false,
+		false,
+		true,
+		true,
+		ImmutableSet.of(),
+		EntityDimensions.changing(2.0F, 2.0F),
+		8,
+		Integer.MAX_VALUE
 	);
 
 	static { BigGlobeMod.LOGGER.debug("Done registering entity types."); }

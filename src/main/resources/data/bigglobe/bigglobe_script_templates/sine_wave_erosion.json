@@ -30,7 +30,7 @@
 		")",
 		"int*(",
 			"highFrequencyIterations = 384 - hints.lod << 6",
-			"lowFrequencyIterations = highFrequencyIterations >> 1",
+			"lowFrequencyIterations = 128 - hints.lod << 6",
 		")",
 		"for (int loop in range[0, highFrequencyIterations):",
 			"long seed = (worldSeed # 16x974EF90428FF872EUL).newSeed(loop)",

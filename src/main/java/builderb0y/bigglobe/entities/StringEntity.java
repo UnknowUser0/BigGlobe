@@ -6,6 +6,7 @@ import java.util.function.ToDoubleFunction;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents.EndTick;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.loader.api.FabricLoader;
 import org.jetbrains.annotations.Nullable;
@@ -74,11 +75,19 @@ public class StringEntity extends Entity {
 		}
 	}
 
+	//apparently lambda methods don't get removed when their enclosing method is of
+	//the wrong side, and apparently some JVMs preload lambda method parameter types.
+	//so, I have to use an anonymous class instead of a lambda to prevent crashes.
+	@SuppressWarnings("Convert2Lambda")
 	@Environment(EnvType.CLIENT)
 	public static void initClient() {
-		ClientTickEvents.END_CLIENT_TICK.register((MinecraftClient client) -> {
-			if (client.world != null) {
-				onWorldTickEnd(client.world);
+		ClientTickEvents.END_CLIENT_TICK.register(new EndTick() {
+
+			@Override
+			public void onEndTick(MinecraftClient client) {
+				if (client.world != null) {
+					onWorldTickEnd(client.world);
+				}
 			}
 		});
 	}

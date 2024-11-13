@@ -5,6 +5,7 @@
 		"is_3d": false
 	},
 	"script": [
-		"island.euclidean_distance == 0.0L ? 0.0L : (x - island.center_x) / (island.euclidean_distance + 64.0L)"
-	]
+		"d_curved_island_height * island.dx_soft_distance ?: 0.0L"
+	],
+	"cache": false
 }

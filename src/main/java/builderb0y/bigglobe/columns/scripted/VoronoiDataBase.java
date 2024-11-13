@@ -6,6 +6,7 @@ import builderb0y.bigglobe.math.BigGlobeMath;
 import builderb0y.bigglobe.noise.Permuter;
 import builderb0y.bigglobe.settings.VoronoiDiagram2D;
 import builderb0y.bigglobe.settings.VoronoiDiagram2D.SeedPoint;
+import builderb0y.bigglobe.util.Derivative2D;
 import builderb0y.scripting.bytecode.MethodInfo;
 import builderb0y.scripting.bytecode.tree.InsnTree;
 import builderb0y.scripting.environments.MutableScriptEnvironment;
@@ -34,8 +35,12 @@ public abstract class VoronoiDataBase implements ColumnValueHolder {
 			get_cell_z,
 			get_center_x,
 			get_center_z,
-			get_soft_distance,
 			get_soft_distance_squared,
+			get_dx_soft_distance_squared,
+			get_dz_soft_distance_squared,
+			get_soft_distance,
+			get_dx_soft_distance,
+			get_dz_soft_distance,
 			get_hard_distance,
 			get_hard_distance_squared,
 			get_euclidean_distance,
@@ -77,12 +82,28 @@ public abstract class VoronoiDataBase implements ColumnValueHolder {
 			return invokeInstance(receiver, this.get_soft_distance);
 		}
 
+		public InsnTree get_dx_soft_distance(InsnTree receiver) {
+			return invokeInstance(receiver, this.get_dx_soft_distance);
+		}
+
+		public InsnTree get_dz_soft_distance(InsnTree receiver) {
+			return invokeInstance(receiver, this.get_dz_soft_distance);
+		}
+
 		public InsnTree pre_compute_soft_distance(InsnTree receiver) {
 			return invokeInstance(receiver, this.pre_compute_soft_distance);
 		}
 
 		public InsnTree get_soft_distance_squared(InsnTree receiver) {
 			return invokeInstance(receiver, this.get_soft_distance_squared);
+		}
+
+		public InsnTree get_dx_soft_distance_squared(InsnTree receiver) {
+			return invokeInstance(receiver, this.get_dx_soft_distance_squared);
+		}
+
+		public InsnTree get_dz_soft_distance_squared(InsnTree receiver) {
+			return invokeInstance(receiver, this.get_dz_soft_distance_squared);
 		}
 
 		public InsnTree pre_compute_soft_distance_squared(InsnTree receiver) {
@@ -130,7 +151,11 @@ public abstract class VoronoiDataBase implements ColumnValueHolder {
 				.addVariable("center_x",                   this.get_center_x                  (loadVoronoiCell))
 				.addVariable("center_z",                   this.get_center_z                  (loadVoronoiCell))
 				.addVariable("soft_distance_squared",      this.get_soft_distance_squared     (loadVoronoiCell))
+				.addVariable("dx_soft_distance_squared",   this.get_dx_soft_distance_squared  (loadVoronoiCell))
+				.addVariable("dz_soft_distance_squared",   this.get_dz_soft_distance_squared  (loadVoronoiCell))
 				.addVariable("soft_distance",              this.get_soft_distance             (loadVoronoiCell))
+				.addVariable("dx_soft_distance",           this.get_dx_soft_distance          (loadVoronoiCell))
+				.addVariable("dz_soft_distance",           this.get_dz_soft_distance          (loadVoronoiCell))
 				.addVariable("hard_distance_squared",      this.get_hard_distance_squared     (loadVoronoiCell))
 				.addVariable("hard_distance",              this.get_hard_distance             (loadVoronoiCell))
 				.addVariable("euclidean_distance_squared", this.get_euclidean_distance_squared(loadVoronoiCell))
@@ -144,7 +169,11 @@ public abstract class VoronoiDataBase implements ColumnValueHolder {
 				.addFieldInvoke("center_x",                   this.get_center_x                  )
 				.addFieldInvoke("center_z",                   this.get_center_z                  )
 				.addFieldInvoke("soft_distance_squared",      this.get_soft_distance_squared     )
+				.addFieldInvoke("dx_soft_distance_squared",   this.get_dx_soft_distance_squared  )
+				.addFieldInvoke("dz_soft_distance_squared",   this.get_dz_soft_distance_squared  )
 				.addFieldInvoke("soft_distance",              this.get_soft_distance             )
+				.addFieldInvoke("dx_soft_distance",           this.get_dx_soft_distance          )
+				.addFieldInvoke("dz_soft_distance",           this.get_dz_soft_distance          )
 				.addFieldInvoke("hard_distance_squared",      this.get_hard_distance_squared     )
 				.addFieldInvoke("hard_distance",              this.get_hard_distance             )
 				.addFieldInvoke("euclidean_distance_squared", this.get_euclidean_distance_squared)
@@ -156,7 +185,8 @@ public abstract class VoronoiDataBase implements ColumnValueHolder {
 	/* public final synthetic ScriptedColumn$Generated_XXX column; */
 	public final VoronoiDiagram2D.Cell cell;
 	public int flags_0;
-	public double softDistanceSquared, softDistance, hardDistance, euclideanDistance;
+	public Derivative2D softDistanceSquared, softDistance;
+	public double hardDistance, euclideanDistance;
 
 	public VoronoiDataBase(VoronoiDiagram2D.Cell cell) {
 		this.cell = cell;
@@ -193,15 +223,18 @@ public abstract class VoronoiDataBase implements ColumnValueHolder {
 	}
 
 	public double get_soft_distance_squared() {
-		int oldFlags = this.flags_0;
-		int newFlags = oldFlags | 1;
-		if (oldFlags != newFlags) {
-			this.flags_0 = newFlags;
-			return this.softDistanceSquared = this.cell.progressToEdgeSquaredD(this.column().x(), this.column().z());
-		}
-		else {
-			return this.softDistanceSquared;
-		}
+		this.pre_compute_soft_distance_squared();
+		return this.softDistanceSquared.value;
+	}
+
+	public double get_dx_soft_distance_squared() {
+		this.pre_compute_soft_distance_squared();
+		return this.softDistanceSquared.dx;
+	}
+
+	public double get_dz_soft_distance_squared() {
+		this.pre_compute_soft_distance_squared();
+		return this.softDistanceSquared.dy;
 	}
 
 	public void pre_compute_soft_distance_squared() {
@@ -209,20 +242,26 @@ public abstract class VoronoiDataBase implements ColumnValueHolder {
 		int newFlags = oldFlags | 1;
 		if (oldFlags != newFlags) {
 			this.flags_0 = newFlags;
-			this.softDistanceSquared = this.cell.progressToEdgeSquaredD(this.column().x(), this.column().z());
+			if (this.softDistanceSquared == null) {
+				this.softDistanceSquared = new Derivative2D();
+			}
+			this.cell.derivativeProgressToEdgeSquaredD(this.softDistanceSquared, this.column().x(), this.column().z());
 		}
 	}
 
 	public double get_soft_distance() {
-		int oldFlags = this.flags_0;
-		int newFlags = oldFlags | 2;
-		if (oldFlags != newFlags) {
-			this.flags_0 = newFlags;
-			return this.softDistance = Math.sqrt(this.get_soft_distance_squared());
-		}
-		else {
-			return this.softDistance;
-		}
+		this.pre_compute_soft_distance();
+		return this.softDistance.value;
+	}
+
+	public double get_dx_soft_distance() {
+		this.pre_compute_soft_distance();
+		return this.softDistance.dx;
+	}
+
+	public double get_dz_soft_distance() {
+		this.pre_compute_soft_distance();
+		return this.softDistance.dy;
 	}
 
 	public void pre_compute_soft_distance() {
@@ -230,7 +269,11 @@ public abstract class VoronoiDataBase implements ColumnValueHolder {
 		int newFlags = oldFlags | 2;
 		if (oldFlags != newFlags) {
 			this.flags_0 = newFlags;
-			this.softDistance = Math.sqrt(this.get_soft_distance_squared());
+			if (this.softDistance == null) {
+				this.softDistance = new Derivative2D();
+			}
+			this.pre_compute_soft_distance_squared();
+			this.softDistance.set(this.softDistanceSquared).sqrt();
 		}
 	}
 

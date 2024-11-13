@@ -9,7 +9,11 @@ import javax.swing.*;
 
 import net.minecraft.util.math.MathHelper;
 
-public class VornoiTest {
+import builderb0y.bigglobe.math.BigGlobeMath;
+import builderb0y.bigglobe.settings.VoronoiDiagram2D.Cell;
+import builderb0y.bigglobe.util.Derivative2D;
+
+public class VornoiDisplay {
 
 	public static void main(String[] args) {
 		//LinkedArrayList.ASSERTS = true;
@@ -33,7 +37,7 @@ public class VornoiTest {
 		}
 
 		public void newDiagram() {
-			this.diagram = new VoronoiDiagram2D(new Seed(0x14a604764c3e173dL), 128, 96);
+			this.diagram = new VoronoiDiagram2D(new Seed(12345L), 256, 192);
 		}
 	}
 
@@ -50,8 +54,8 @@ public class VornoiTest {
 			this.frame = frame;
 			this.clickedCell = frame.diagram.getCell(-141, -37);
 			System.out.println(this.clickedCell);
-			this.origin.x = this.clickedCell.center.centerX - (512 >> 1);
-			this.origin.y = this.clickedCell.center.centerZ - (512 >> 1);
+			this.origin.x = -5540 - (512 >> 1);
+			this.origin.y = -3887 - (512 >> 1);
 			this.addMouseListener(new MouseAdapter() {
 
 				@Override
@@ -90,6 +94,35 @@ public class VornoiTest {
 					}
 					panel.repaint();
 				}
+
+				@Override
+				public void mouseMoved(MouseEvent e) {
+					VoronoiPanel panel = (VoronoiPanel)(e.getComponent());
+					int realX = e.getX() + panel.origin.x;
+					int realY = e.getY() + panel.origin.y;
+					Cell cell = panel.frame.diagram.getNearestCell(realX, realY);
+					Derivative2D derivative = new Derivative2D();
+					cell.derivativeProgressToEdgeSquaredD(derivative, realX, realY);
+					double mul = 1.0D / Math.sqrt(BigGlobeMath.squareD(derivative.dx, derivative.dy));
+					derivative.dx *= mul;
+					derivative.dy *= mul;
+					Dimension size = Toolkit.getDefaultToolkit().getBestCursorSize(64, 64);
+					BufferedImage cursorImage = new BufferedImage(size.width, size.height, BufferedImage.TYPE_INT_ARGB);
+					for (int y = 0; y < size.height; y++) {
+						for (int x = 0; x < size.width; x++) {
+							double relativeX = (x + 0.5D) / size.width * 2.0D - 1.0D;
+							double relativeY = (y + 0.5D) / size.height * 2.0D - 1.0D;
+							double r = Math.sqrt(BigGlobeMath.squareD(relativeX, relativeY));
+							if (r > 0.875 && r < 1.0) {
+								relativeX /= r;
+								relativeY /= r;
+								double dot = derivative.dx * relativeX + derivative.dy * relativeY;
+								cursorImage.setRGB(x, y, dot > 0.99 ? -1 : 0xFF000000);
+							}
+						}
+					}
+					panel.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(cursorImage, new Point(size.width >> 1, size.height >> 1), "direction"));
+				}
 			});
 		}
 
@@ -109,6 +142,14 @@ public class VornoiTest {
 			}
 			else {
 				VoronoiDiagram2D.Cell cell = this.frame.diagram.getNearestCell(realX, realY);
+				Derivative2D derivative = new Derivative2D();
+				cell.derivativeProgressToEdgeSquaredD(derivative, realX, realY);
+				double mul = 128.0D / Math.sqrt(BigGlobeMath.squareD(derivative.dx, derivative.dy));
+				int red   = MathHelper.clamp((int)(derivative.dx * mul + 128.0D), 0, 255);
+				int green = MathHelper.clamp((int)(derivative.dy * mul + 128.0D), 0, 255);
+				int blue  = 0; //MathHelper.clamp((int)(derivative.value *   256.0D         ), 0, 255);
+				color = (red << 16) | (green << 8) | blue;
+				/*
 				int brightness = MathHelper.floor(cell.progressToEdgeD(realX, realY) * 255.0D + 0.5D);
 				if (cell.center.cellEquals(this.clickedCell.center)) {
 					color = brightness << 16;
@@ -122,6 +163,7 @@ public class VornoiTest {
 					}
 					color = brightness;
 				}
+				*/
 				color |= 0xFF000000;
 			}
 			this.image.setRGB(x, y, color);

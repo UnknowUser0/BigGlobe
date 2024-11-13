@@ -372,6 +372,18 @@ public class BigGlobeMath {
 		return Math.log(value);
 	}
 
+	public static double asinh(double x) {
+		return Math.copySign(Math.log(Math.sqrt(x * x + 1.0D) + Math.abs(x)), x);
+	}
+
+	public static double acosh(double x) {
+		return Math.log(Math.sqrt(x * x - 1.0D) + x);
+	}
+
+	public static double atanh(double x) {
+		return Math.log((1.0D + x) / (1.0D - x)) * 0.5D;
+	}
+
 	//////////////////////////////// miscellaneous ////////////////////////////////
 
 	public static float sigmoid01(float value) {

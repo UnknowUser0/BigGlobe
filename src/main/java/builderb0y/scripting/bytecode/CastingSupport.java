@@ -114,21 +114,25 @@ public class CastingSupport {
 	}
 
 	public static int floorInt(float value) {
+		if (Float.isNaN(value)) throw new ArithmeticException("Attempt to cast NaN to int");
 		int result = (int)(value);
 		return result != Integer.MIN_VALUE && ((float)(result)) > value ? result - 1 : result;
 	}
 
 	public static int floorInt(double value) {
+		if (Double.isNaN(value)) throw new ArithmeticException("Attempt to cast NaN to int");
 		int result = (int)(value);
 		return result != Integer.MIN_VALUE && ((double)(result)) > value ? result - 1 : result;
 	}
 
 	public static long floorLong(float value) {
+		if (Float.isNaN(value)) throw new ArithmeticException("Attempt to cast NaN to long");
 		long result = (long)(value);
 		return result != Long.MIN_VALUE && ((float)(result)) > value ? result - 1 : result;
 	}
 
 	public static long floorLong(double value) {
+		if (Double.isNaN(value)) throw new ArithmeticException("Attempt to cast NaN to long");
 		long result = (long)(value);
 		return result != Long.MIN_VALUE && ((double)(result)) > value ? result - 1 : result;
 	}
@@ -138,21 +142,25 @@ public class CastingSupport {
 	}
 
 	public static int ceilInt(float value) {
+		if (Float.isNaN(value)) throw new ArithmeticException("Attempt to cast NaN to int");
 		int result = (int)(value);
 		return result != Integer.MAX_VALUE && ((float)(result)) < value ? result + 1 : result;
 	}
 
 	public static int ceilInt(double value) {
+		if (Double.isNaN(value)) throw new ArithmeticException("Attempt to cast NaN to int");
 		int result = (int)(value);
 		return result != Integer.MAX_VALUE && ((double)(result)) < value ? result + 1 : result;
 	}
 
 	public static long ceilLong(float value) {
+		if (Float.isNaN(value)) throw new ArithmeticException("Attempt to cast NaN to long");
 		long result = (long)(value);
 		return result != Long.MAX_VALUE && ((float)(result)) < value ? result + 1 : result;
 	}
 
 	public static long ceilLong(double value) {
+		if (Double.isNaN(value)) throw new ArithmeticException("Attempt to cast NaN to long");
 		long result = (long)(value);
 		return result != Long.MAX_VALUE && ((double)(result)) < value ? result + 1 : result;
 	}
@@ -186,11 +194,13 @@ public class CastingSupport {
 	}
 
 	public static int lowerInt(float value) {
+		if (Float.isNaN(value)) throw new ArithmeticException("Attempt to cast NaN to int");
 		int result = (int)(value);
 		return result != Integer.MIN_VALUE && ((double)(result)) >= ((double)(value)) ? result - 1 : result;
 	}
 
 	public static int lowerInt(double value) {
+		if (Double.isNaN(value)) throw new ArithmeticException("Attempt to cast NaN to int");
 		int result = (int)(value);
 		return result != Integer.MIN_VALUE && ((double)(result)) >= value ? result - 1 : result;
 	}
@@ -204,12 +214,14 @@ public class CastingSupport {
 	}
 
 	public static long lowerLong(float value) {
+		if (Float.isNaN(value)) throw new ArithmeticException("Attempt to cast NaN to long");
 		long result = (long)(value);
 		if (!(Math.abs(value) < -(float)(Long.MIN_VALUE))) return result;
 		return value <= 0.0F || !needsRounding(value) ? result - 1 : result;
 	}
 
 	public static long lowerLong(double value) {
+		if (Double.isNaN(value)) throw new ArithmeticException("Attempt to cast NaN to long");
 		long result = (long)(value);
 		if (!(Math.abs(value) < -(double)(Long.MIN_VALUE))) return result;
 		return value <= 0.0D || !needsRounding(value) ? result - 1 : result;
@@ -224,11 +236,13 @@ public class CastingSupport {
 	}
 
 	public static int higherInt(float value) {
+		if (Float.isNaN(value)) throw new ArithmeticException("Attempt to cast NaN to int");
 		int result = (int)(value);
 		return result != Integer.MAX_VALUE && ((double)(result)) <= ((double)(value)) ? result + 1 : result;
 	}
 
 	public static int higherInt(double value) {
+		if (Double.isNaN(value)) throw new ArithmeticException("Attempt to cast NaN to int");
 		int result = (int)(value);
 		return result != Integer.MAX_VALUE && ((double)(result)) <= value ? result + 1 : result;
 	}
@@ -242,12 +256,14 @@ public class CastingSupport {
 	}
 
 	public static long higherLong(float value) {
+		if (Float.isNaN(value)) throw new ArithmeticException("Attempt to cast NaN to long");
 		long result = (long)(value);
 		if (!(Math.abs(value) < -(double)(Long.MIN_VALUE))) return value == ((float)(Long.MIN_VALUE)) ? result + 1 : result;
 		return value >= 0.0F || !needsRounding(value) ? result + 1 : result;
 	}
 
 	public static long higherLong(double value) {
+		if (Double.isNaN(value)) throw new ArithmeticException("Attempt to cast NaN to long");
 		long result = (long)(value);
 		if (!(Math.abs(value) < -(double)(Long.MIN_VALUE))) return value == ((double)(Long.MIN_VALUE)) ? result + 1 : result;
 		return value >= 0.0D || !needsRounding(value) ? result + 1 : result;
