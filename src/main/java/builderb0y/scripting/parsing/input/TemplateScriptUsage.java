@@ -1,10 +1,6 @@
 package builderb0y.scripting.parsing.input;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.*;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -14,18 +10,13 @@ import builderb0y.autocodec.annotations.MemberUsage;
 import builderb0y.autocodec.annotations.MultiLine;
 import builderb0y.autocodec.annotations.UseVerifier;
 import builderb0y.autocodec.annotations.VerifyNullable;
-import builderb0y.autocodec.coders.AutoCoder;
-import builderb0y.autocodec.reflection.reification.ReifiedType;
 import builderb0y.autocodec.verifiers.VerifyContext;
 import builderb0y.autocodec.verifiers.VerifyException;
-import builderb0y.bigglobe.codecs.BigGlobeAutoCodec;
 import builderb0y.scripting.parsing.ExpressionParser.IdentifierName;
 import builderb0y.scripting.parsing.input.ScriptTemplate.RequiredInput;
 
 @UseVerifier(name = "verify", in = TemplateScriptUsage.class, usage = MemberUsage.METHOD_IS_HANDLER)
 public class TemplateScriptUsage extends ScriptUsage {
-
-	public static final AutoCoder<Map<String, String>> INPUTS_CODER = BigGlobeAutoCodec.AUTO_CODEC.createCoder(new ReifiedType<@VerifyNullable Map<@IdentifierName String, @MultiLine String>>() {});
 
 	public final RegistryEntry<ScriptTemplate> template;
 	public final @VerifyNullable Map<@IdentifierName String, @MultiLine String> inputs;
@@ -44,10 +35,48 @@ public class TemplateScriptUsage extends ScriptUsage {
 		TemplateScriptUsage usage = context.object;
 		if (usage == null) return;
 		List<RequiredInput> requiredInputs = usage.template.value().inputs;
-		Set<String> expected = requiredInputs == null || requiredInputs.isEmpty() ? Collections.emptySet() : requiredInputs.stream().map(RequiredInput::name).collect(Collectors.toSet());
-		Set<String> actual = usage.inputs == null || usage.inputs.isEmpty() ? Collections.emptySet() : usage.inputs.keySet();
-		if (!expected.equals(actual)) {
-			throw new VerifyException(() -> "Input mismatch: expected " + expected + ", got " + actual);
+		Map<String, String> providedInputs = usage.inputs;
+		if (
+			(requiredInputs != null && !requiredInputs.isEmpty()) ||
+			(providedInputs != null && !providedInputs.isEmpty())
+		) {
+			if (requiredInputs == null) requiredInputs = Collections.emptyList();
+			if (providedInputs == null) providedInputs = Collections.emptyMap();
+			providedInputs = new HashMap<>(providedInputs);
+			Set<String> missingInputs = null;
+			for (RequiredInput requiredInput : requiredInputs) {
+				if (providedInputs.remove(requiredInput.name()) == null && requiredInput.fallback() == null) {
+					if (missingInputs == null) missingInputs = new HashSet<>(4);
+					missingInputs.add(requiredInput.name());
+				}
+			}
+			if (missingInputs != null || !providedInputs.isEmpty()) {
+				//did I put too much effort into this error message?
+				//it's longer than the verification algorithm, so... probably.
+				Set<String> missingInputs_ = missingInputs;
+				Set<String> unknownInputs = providedInputs.keySet();
+				throw new VerifyException(() -> {
+					StringBuilder message = new StringBuilder(64);
+					if (missingInputs_ != null) {
+						if (missingInputs_.size() == 1) {
+							message.append("Missing input: ").append(missingInputs_.iterator().next());
+						}
+						else {
+							message.append("Missing inputs: ").append(missingInputs_);
+						}
+					}
+					if (!unknownInputs.isEmpty()) {
+						if (!message.isEmpty()) message.append("; ");
+						if (unknownInputs.size() == 1) {
+							message.append("Unknown input: ").append(unknownInputs.iterator().next());
+						}
+						else {
+							message.append("Unknown inputs: ").append(unknownInputs);
+						}
+					}
+					return message.toString();
+				});
+			}
 		}
 	}
 

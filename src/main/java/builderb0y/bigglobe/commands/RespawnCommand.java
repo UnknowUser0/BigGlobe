@@ -41,8 +41,10 @@ public class RespawnCommand {
 			.literal(BigGlobeMod.MODID + ":respawn")
 			.requires((ServerCommandSource source) -> source.hasPermissionLevel(2))
 			.executes((CommandContext<ServerCommandSource> context) -> {
-				RespawnMode.AUTO.respawnPlayer(context.getSource().getPlayerOrThrow(), false);
-				return 1;
+				Text failReason = RespawnMode.AUTO.respawnPlayer(context.getSource().getPlayerOrThrow(), false);
+				if (failReason == null) return 1;
+				context.getSource().sendError(failReason);
+				return 0;
 			})
 			.then(
 				CommandManager

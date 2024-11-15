@@ -51,8 +51,10 @@ public class TemplateScriptParser<I> extends ScriptParser<I> {
 	public static ArrayBuilder<InsnTree> parseInitializers(ExpressionParser parser, ScriptUsage usage) throws ScriptParsingException {
 		ArrayBuilder<InsnTree> initializers = new ArrayBuilder<>();
 		for (RequiredInput input : usage.getTemplate().value().getInputs()) {
-			String inputSource = usage.getInputs().get(input.name());
-			assert inputSource != null;
+			String inputSource = usage.getInputs().getOrDefault(input.name(), input.fallback());
+			if (inputSource == null) {
+				throw new ScriptParsingException("Missing input " + input.name(), null);
+			}
 			TypeInfo type = parser.environment.getType(parser, input.type());
 			if (type == null) {
 				throw new ScriptParsingException("Unknown type: " + input.type(), null);

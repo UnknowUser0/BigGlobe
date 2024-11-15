@@ -6,7 +6,9 @@ public class BigGlobeMath {
 	public static final double
 		TAU    = Math.PI * 2.0D,
 		LN_2   = Math.log(2.0D),
-		LOG2_E = 1.0D / LN_2;
+		LOG2_E = 1.0D / LN_2,
+		GOLDEN_RATIO = 1.618033988749895,
+		GOLDEN_ANGLE = 2.39996322972865332;
 
 	//////////////////////////////// square1 ////////////////////////////////
 

@@ -1,16 +1,19 @@
 package builderb0y.scripting.parsing.input;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Stream;
 
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.registry.entry.RegistryEntry;
 
-import builderb0y.autocodec.annotations.MemberUsage;
-import builderb0y.autocodec.annotations.UseCoder;
-import builderb0y.autocodec.annotations.VerifyNullable;
+import builderb0y.autocodec.annotations.*;
 import builderb0y.autocodec.reflection.reification.ReifiedType;
+import builderb0y.autocodec.verifiers.VerifyContext;
+import builderb0y.autocodec.verifiers.VerifyException;
 import builderb0y.bigglobe.codecs.BigGlobeAutoCodec;
 import builderb0y.bigglobe.codecs.TypelessCoderRegistry;
 import builderb0y.bigglobe.columns.scripted.dependencies.DependencyView;
@@ -18,6 +21,7 @@ import builderb0y.bigglobe.columns.scripted.dependencies.DependencyView.SimpleDe
 import builderb0y.scripting.parsing.ExpressionParser.IdentifierName;
 import builderb0y.scripting.parsing.input.ScriptFileResolver.ResolvedIncludes;
 
+@UseVerifier(name = "verify", in = ScriptTemplate.class, usage = MemberUsage.METHOD_IS_HANDLER)
 @UseCoder(name = "CODER", in = ScriptTemplate.class, usage = MemberUsage.FIELD_CONTAINS_HANDLER)
 public abstract class ScriptTemplate implements SimpleDependencyView {
 
@@ -35,6 +39,17 @@ public abstract class ScriptTemplate implements SimpleDependencyView {
 		this.includes = includes;
 	}
 
+	public static <T_Encoded> void verify(VerifyContext<T_Encoded, ScriptTemplate> context) throws VerifyException {
+		ScriptTemplate template = context.object;
+		if (template == null || template.inputs == null || template.inputs.isEmpty()) return;
+		Set<String> names = new ObjectOpenHashSet<>(template.inputs.size());
+		for (RequiredInput input : template.inputs) {
+			if (!names.add(input.name())) {
+				throw new VerifyException(() -> "Duplicate input name: " + input.name());
+			}
+		}
+	}
+
 	public abstract String getRawSource();
 
 	public String getSource() {
@@ -45,7 +60,11 @@ public abstract class ScriptTemplate implements SimpleDependencyView {
 		return this.inputs;
 	}
 
-	public static record RequiredInput(@IdentifierName String name, String type) {}
+	public static record RequiredInput(
+		@IdentifierName String name,
+		String type,
+		@UseName("default") @MultiLine @VerifyNullable String fallback
+	) {}
 
 	@Override
 	public Stream<? extends RegistryEntry<? extends DependencyView>> streamDirectDependencies() {

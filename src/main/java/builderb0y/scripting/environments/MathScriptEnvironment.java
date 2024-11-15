@@ -5,6 +5,7 @@ import java.util.Arrays;
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.Label;
 
+import builderb0y.bigglobe.math.BigGlobeMath;
 import builderb0y.bigglobe.math.Interpolator;
 import builderb0y.scripting.bytecode.MethodCompileContext;
 import builderb0y.scripting.bytecode.MethodInfo;
@@ -27,6 +28,8 @@ public class MathScriptEnvironment extends MutableScriptEnvironment {
 		.addVariableConstant("pi", Math.PI)
 		.addVariableConstant("tau", Math.PI * 2.0D)
 		.addVariableConstant("e", Math.E)
+		.addVariableConstant("goldenRatio", BigGlobeMath.GOLDEN_RATIO)
+		.addVariableConstant("goldenAngle", BigGlobeMath.GOLDEN_ANGLE)
 		.addVariableConstant("nan", Float.NaN)
 		.addVariableConstant("inf", Float.POSITIVE_INFINITY)
 		.addFunctionInvokeStatics(Math.class, "sin", "cos", "tan", "asin", "acos", "atan", "sinh", "cosh", "tanh", "toRadians", "toDegrees", "exp", "log", "sqrt", "cbrt", "floor", "ceil", "pow")

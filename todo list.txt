@@ -29,6 +29,7 @@ to finish before release:
 	document seed on noise-typed column values.
 	document dx and dz fields on voronoi data bases.
 		document d_soft_distance being NaN at the center point.
+	document goldenRatio and goldenAngle constants new in MathScriptEnvironment.
 	make surface Y level floor(surface height) instead of ceil().
 	rename cavern-related column values to deep dark.
 	make lakes able to place multiple features on surface.
@@ -36,6 +37,7 @@ to finish before release:
 	allow script templates to provide default values for their inputs.
 	ensure StructureManager doesn't add structure references for chunks
 		which don't intersect any pieces of the referenced structure.
+	verify that no structure or column value overriders produce NaN.
 
 changelog:
 	# Changes for normal players
@@ -43,9 +45,11 @@ changelog:
 	* Revamped rivers, they are now bigger, rarer, and more eroded.
 	* Villages are now more common and more likely to have their spawn conditions met.
 	* Island noise is different in this version. Expect discontinuities across the boundary between old chunks and new chunks.
+		* On the plus side, pseudo-erosion looks much better on islands now.
 	# Changes for data pack makers
 	* Added new way to ensure that two noise-typed column values use the same seed.
 	* Added analytical derivatives of voronoi.soft_distance_squared and voronoi.soft_distance.
+	* Script template inputs can now have default values.
 
 alternate world presets:
 	paradise.

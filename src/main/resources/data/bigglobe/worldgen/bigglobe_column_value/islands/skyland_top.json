@@ -4,5 +4,11 @@
 		"type": "double",
 		"is_3d": false
 	},
-	"script": "exp(skyland_height_offset / 24.0L + 3.25L) + skyland_top_plain + world_traits.`bigglobe:sea_level`"
+	"script": [
+		"exp_skyland_height_noise + eroded_skyland_height + skyland_top_plain + world_traits.`bigglobe:sea_level`"
+	],
+	"valid": {
+		"where": "is_floating",
+		"fallback": 0.0
+	}
 }

@@ -5,7 +5,10 @@
 		"is_3d": false
 	},
 	"script": [
-		"(d_curved_island_height * island.dz_soft_distance) ?: 0.0L"
+		"exp(skyland_height_noise)"
 	],
-	"cache": false
+	"valid": {
+		"where": "is_floating",
+		"fallback": 0.0
+	}
 }
