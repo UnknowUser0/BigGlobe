@@ -52,18 +52,16 @@ public class MinecraftScriptEnvironment {
 		.addFieldInvokeStatic(BlockWrapper.class, "id")
 		.addFieldInvoke(EntryWrapper.class, "id")
 		.addFieldInvokes(BiomeEntry.class, "temperature", "downfall")
-		.addMethodInvokeStatics(BlockWrapper.class, "getDefaultState", "isIn")
+		.addMethodInvokeStatics(BlockWrapper.class, "getDefaultState")
 		.addMethodMultiInvokeStatic(BlockWrapper.class, "getRandomState")
 		.addMethodInvokeSpecific(BlockTag.class, "random", Block.class, RandomGenerator.class)
 		.addMethodInvokeSpecific(BlockTag.class, "random", Block.class, long.class)
-		.addMethodInvokeStatics(BlockStateWrapper.class, "isIn", "getBlock", "isAir", "isReplaceable", "hasWater", "hasLava", "hasSoulLava", "hasFluid", "blocksLight", "hasCollision", "hasFullCubeCollision", "hasFullCubeOutline", "rotate", "mirror", "with")
+		.addMethodInvokeStatics(BlockStateWrapper.class, "getBlock", "isAir", "isReplaceable", "hasWater", "hasLava", "hasSoulLava", "hasFluid", "blocksLight", "hasCollision", "hasFullCubeCollision", "hasFullCubeOutline", "rotate", "mirror", "with")
 		.addField(BlockStateWrapper.TYPE, null, new FieldHandler.Named("<property getter>", (ExpressionParser parser, InsnTree receiver, String name, GetFieldMode mode) -> {
 			return mode.makeInvoker(parser, receiver, BlockStateWrapper.GET_PROPERTY, ldc(name));
 		}))
-		.addMethodInvokeSpecific(BiomeEntry.class, "isIn", boolean.class, BiomeTag.class)
 		.addMethodInvokeSpecific(BiomeTag.class, "random", BiomeEntry.class, RandomGenerator.class)
 		.addMethodInvokeSpecific(BiomeTag.class, "random", BiomeEntry.class, long.class)
-		.addMethodInvokeSpecific(ConfiguredFeatureEntry.class, "isIn", boolean.class, ConfiguredFeatureTag.class)
 		.addMethodInvokeSpecific(ConfiguredFeatureTag.class, "random", ConfiguredFeatureEntry.class, RandomGenerator.class)
 		.addMethodInvokeSpecific(ConfiguredFeatureTag.class, "random", ConfiguredFeatureEntry.class, long.class)
 
@@ -74,6 +72,7 @@ public class MinecraftScriptEnvironment {
 		.addCastConstant(BiomeEntry            .CONSTANT_FACTORY, true)
 		.addCastConstant(ConfiguredFeatureEntry.CONSTANT_FACTORY, true)
 		.configure      (BlockTag              .PARSER)
+		.addMethod      (BlockStateWrapper     .TYPE, "isIn", BlockStateWrapper.TAG_PARSER.makeIsIn())
 		.configure      (BiomeTag              .PARSER)
 		.configure      (ConfiguredFeatureTag  .PARSER)
 

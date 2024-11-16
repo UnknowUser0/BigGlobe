@@ -8,8 +8,11 @@ import net.minecraft.nbt.NbtInt;
 import net.minecraft.nbt.NbtString;
 import net.minecraft.registry.Registries;
 
+import builderb0y.bigglobe.scripting.wrappers.tags.ItemTag;
+import builderb0y.bigglobe.scripting.wrappers.tags.TagParser;
 import builderb0y.bigglobe.versions.ItemStackVersions;
 import builderb0y.bigglobe.versions.RegistryVersions;
+import builderb0y.scripting.bytecode.MethodInfo;
 import builderb0y.scripting.bytecode.TypeInfo;
 import builderb0y.scripting.environments.BuiltinScriptEnvironment;
 
@@ -19,6 +22,7 @@ public class ItemStackWrapper {
 
 	public static final TypeInfo TYPE = type(ItemStack.class);
 	public static final ItemStack EMPTY = ItemStack.EMPTY;
+	public static final TagParser TAG_PARSER = new TagParser("ItemTag", ItemTag.class, "ItemStack", MethodInfo.inCaller("isIn"));
 
 	//////////////////////////////// creating stacks ////////////////////////////////
 
@@ -104,5 +108,11 @@ public class ItemStackWrapper {
 
 	public static NbtCompound nbt(ItemStack stack) {
 		return ItemStackVersions.toNbt(stack);
+	}
+
+	//////////////////////////////// other ////////////////////////////////
+
+	public static boolean isIn(ItemStack stack, ItemTag tag) {
+		return tag.list.contains(stack.getRegistryEntry());
 	}
 }

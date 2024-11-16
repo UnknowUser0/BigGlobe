@@ -23,7 +23,7 @@ public class ItemScriptEnvironment {
 		.addQualifiedFunctionRenamedMultiInvokeStatic(ItemStackWrapper.TYPE, ItemStackWrapper.class, "new", "create")
 
 		.addFieldInvokeStatic(ItemWrapper.class, "id")
-		.addMethodInvokeStatics(ItemWrapper.class, "isIn", "getDefaultStack")
+		.addMethodInvokeStatics(ItemWrapper.class, "getDefaultStack")
 
 		.addMethodInvokeSpecific(ItemTag.class, "random", Item.class, RandomGenerator.class)
 		.addMethodInvokeSpecific(ItemTag.class, "random", Item.class, long.class)
@@ -33,6 +33,7 @@ public class ItemScriptEnvironment {
 		.addFieldInvokeStatics(ItemStackWrapper.class, "empty", "maxCount", "stackable", "count")
 		.addFieldInvokeStatics(ItemStackWrapper.class, "damage", "maxDamage", "damageable")
 		.addFieldInvokeStatic(ItemStackWrapper.class, "nbt")
+		.addMethod(ItemStackWrapper.TYPE, "isIn", ItemStackWrapper.TAG_PARSER.makeIsIn())
 	);
 
 	public static Consumer<MutableScriptEnvironment> createWithRandom(InsnTree loadRandom) {

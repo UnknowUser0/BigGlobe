@@ -9,6 +9,7 @@ import builderb0y.bigglobe.dynamicRegistries.BigGlobeDynamicRegistries;
 import builderb0y.bigglobe.dynamicRegistries.WoodPalette;
 import builderb0y.bigglobe.scripting.wrappers.entries.WoodPaletteEntry;
 import builderb0y.bigglobe.util.DelayedEntryList;
+import builderb0y.scripting.bytecode.MethodInfo;
 import builderb0y.scripting.bytecode.TypeInfo;
 
 import static builderb0y.scripting.bytecode.InsnTrees.*;
@@ -16,7 +17,7 @@ import static builderb0y.scripting.bytecode.InsnTrees.*;
 public class WoodPaletteTag extends TagWrapper<WoodPalette, WoodPaletteEntry> {
 
 	public static final TypeInfo TYPE = type(WoodPaletteTag.class);
-	public static final TagParser PARSER = new TagParser("WoodPaletteTag", WoodPaletteTag.class);
+	public static final TagParser PARSER = new TagParser("WoodPaletteTag", WoodPaletteTag.class, "WoodPalette", MethodInfo.findMethod(WoodPaletteEntry.class, "isIn", boolean.class, WoodPaletteTag.class));
 
 	public WoodPaletteTag(DelayedEntryList<WoodPalette> list) {
 		super(list);

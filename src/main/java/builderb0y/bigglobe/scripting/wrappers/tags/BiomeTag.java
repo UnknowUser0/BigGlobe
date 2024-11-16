@@ -9,6 +9,7 @@ import net.minecraft.world.biome.Biome;
 
 import builderb0y.bigglobe.scripting.wrappers.entries.BiomeEntry;
 import builderb0y.bigglobe.util.DelayedEntryList;
+import builderb0y.scripting.bytecode.MethodInfo;
 import builderb0y.scripting.bytecode.TypeInfo;
 
 import static builderb0y.scripting.bytecode.InsnTrees.*;
@@ -16,7 +17,7 @@ import static builderb0y.scripting.bytecode.InsnTrees.*;
 public class BiomeTag extends TagWrapper<Biome, BiomeEntry> {
 
 	public static final TypeInfo TYPE = type(BiomeTag.class);
-	public static final TagParser PARSER = new TagParser("BiomeTag", BiomeTag.class);
+	public static final TagParser PARSER = new TagParser("BiomeTag", BiomeTag.class, "Biome", MethodInfo.findMethod(BiomeEntry.class, "isIn", boolean.class, BiomeTag.class));
 
 	public BiomeTag(DelayedEntryList<Biome> list) {
 		super(list);

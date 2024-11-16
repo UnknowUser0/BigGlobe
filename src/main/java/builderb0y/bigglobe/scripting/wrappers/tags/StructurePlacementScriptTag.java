@@ -9,6 +9,7 @@ import builderb0y.bigglobe.dynamicRegistries.BigGlobeDynamicRegistries;
 import builderb0y.bigglobe.scripting.wrappers.entries.StructurePlacementScriptEntry;
 import builderb0y.bigglobe.structures.scripted.ScriptedStructure.CombinedStructureScripts;
 import builderb0y.bigglobe.util.DelayedEntryList;
+import builderb0y.scripting.bytecode.MethodInfo;
 import builderb0y.scripting.bytecode.TypeInfo;
 
 import static builderb0y.scripting.bytecode.InsnTrees.*;
@@ -16,7 +17,7 @@ import static builderb0y.scripting.bytecode.InsnTrees.*;
 public class StructurePlacementScriptTag extends TagWrapper<CombinedStructureScripts, StructurePlacementScriptEntry> {
 
 	public static final TypeInfo TYPE = type(StructurePlacementScriptTag.class);
-	public static final TagParser PARSER = new TagParser("StructurePlacementScriptTag", StructurePlacementScriptTag.class);
+	public static final TagParser PARSER = new TagParser("StructurePlacementScriptTag", StructurePlacementScriptTag.class, "StructurePlacementScript", MethodInfo.findMethod(StructurePlacementScriptEntry.class, "isIn", boolean.class, StructurePlacementScriptTag.class));
 
 	public StructurePlacementScriptTag(DelayedEntryList<CombinedStructureScripts> list) {
 		super(list);

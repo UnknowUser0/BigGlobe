@@ -388,6 +388,21 @@ public interface ScriptEnvironment {
 		return result;
 	}
 
+	public static InsnTree[] castArgumentsSameType(ExpressionParser parser, String name, TypeInfo expectedType, CastMode mode, InsnTree... arguments) {
+		int length = arguments.length;
+		InsnTree[] result = arguments;
+		for (int index = 0; index < length; index++) {
+			InsnTree oldArg = arguments[index];
+			InsnTree newArg = oldArg.cast(parser, expectedType, mode);
+			if (newArg == null) return null;
+			if (oldArg != newArg) {
+				if (result == arguments) result = result.clone();
+				result[index] = newArg;
+			}
+		}
+		return result;
+	}
+
 	public static InsnTree castArgument(ExpressionParser parser, MethodInfo method, CastMode mode, InsnTree... arguments) {
 		return castArgument(parser, method.name, method.paramTypes[0], mode, arguments);
 	}

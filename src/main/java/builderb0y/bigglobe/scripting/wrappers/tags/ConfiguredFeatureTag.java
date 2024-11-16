@@ -9,6 +9,7 @@ import net.minecraft.world.gen.feature.ConfiguredFeature;
 
 import builderb0y.bigglobe.scripting.wrappers.entries.ConfiguredFeatureEntry;
 import builderb0y.bigglobe.util.DelayedEntryList;
+import builderb0y.scripting.bytecode.MethodInfo;
 import builderb0y.scripting.bytecode.TypeInfo;
 
 import static builderb0y.scripting.bytecode.InsnTrees.*;
@@ -16,7 +17,7 @@ import static builderb0y.scripting.bytecode.InsnTrees.*;
 public class ConfiguredFeatureTag extends TagWrapper<ConfiguredFeature<?, ?>, ConfiguredFeatureEntry> {
 
 	public static final TypeInfo TYPE = type(ConfiguredFeatureTag.class);
-	public static final TagParser PARSER = new TagParser("ConfiguredFeatureTag", ConfiguredFeatureTag.class);
+	public static final TagParser PARSER = new TagParser("ConfiguredFeatureTag", ConfiguredFeatureTag.class, "ConfiguredFeature", MethodInfo.findMethod(ConfiguredFeatureEntry.class, "isIn", boolean.class, ConfiguredFeatureTag.class));
 
 	public ConfiguredFeatureTag(DelayedEntryList<ConfiguredFeature<?, ?>> list) {
 		super(list);

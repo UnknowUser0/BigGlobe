@@ -367,7 +367,7 @@ public class GeodeStructure extends BigGlobeStructure implements RawGenerationSt
 						for (int y = minY; y <= maxY; y++) {
 							pos.setY(y);
 							double rxyz = rxz + BigGlobeMath.squareD((y - this.data.y) * rcpRadius);
-							double noise = samples.getD(y - minY);
+							double noise = samples.implGetD(y - minY);
 							noise -= rxyz * noiseMax;
 							placed:
 							if (noise > 0.0D) {

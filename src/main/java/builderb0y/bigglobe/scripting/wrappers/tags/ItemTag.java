@@ -7,7 +7,9 @@ import net.minecraft.item.Item;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
 
+import builderb0y.bigglobe.scripting.wrappers.ItemWrapper;
 import builderb0y.bigglobe.util.DelayedEntryList;
+import builderb0y.scripting.bytecode.MethodInfo;
 import builderb0y.scripting.bytecode.TypeInfo;
 
 import static builderb0y.scripting.bytecode.InsnTrees.*;
@@ -15,7 +17,7 @@ import static builderb0y.scripting.bytecode.InsnTrees.*;
 public class ItemTag extends TagWrapper<Item, Item> {
 
 	public static final TypeInfo TYPE = type(ItemTag.class);
-	public static final TagParser PARSER = new TagParser("ItemTag", ItemTag.class);
+	public static final TagParser PARSER = new TagParser("ItemTag", ItemTag.class, "Item", MethodInfo.findMethod(ItemWrapper.class, "isIn", boolean.class, Item.class, ItemTag.class));
 
 	public ItemTag(DelayedEntryList<Item> list) {
 		super(list);

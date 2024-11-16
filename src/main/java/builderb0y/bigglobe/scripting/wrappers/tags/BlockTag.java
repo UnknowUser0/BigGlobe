@@ -7,7 +7,9 @@ import net.minecraft.block.Block;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
 
+import builderb0y.bigglobe.scripting.wrappers.BlockWrapper;
 import builderb0y.bigglobe.util.DelayedEntryList;
+import builderb0y.scripting.bytecode.MethodInfo;
 import builderb0y.scripting.bytecode.TypeInfo;
 
 import static builderb0y.scripting.bytecode.InsnTrees.*;
@@ -15,7 +17,7 @@ import static builderb0y.scripting.bytecode.InsnTrees.*;
 public class BlockTag extends TagWrapper<Block, Block> {
 
 	public static final TypeInfo TYPE = type(BlockTag.class);
-	public static final TagParser PARSER = new TagParser("BlockTag", BlockTag.class);
+	public static final TagParser PARSER = new TagParser("BlockTag", BlockTag.class, "Block", MethodInfo.findMethod(BlockWrapper.class, "isIn", boolean.class, Block.class, BlockTag.class));
 
 	public BlockTag(DelayedEntryList<Block> list) {
 		super(list);

@@ -34,10 +34,6 @@ to finish before release:
 	rename cavern-related column values to deep dark.
 	make lakes able to place multiple features on surface.
 		use a tag.
-	allow script templates to provide default values for their inputs.
-	ensure StructureManager doesn't add structure references for chunks
-		which don't intersect any pieces of the referenced structure.
-	verify that no structure or column value overriders produce NaN.
 
 changelog:
 	# Changes for normal players

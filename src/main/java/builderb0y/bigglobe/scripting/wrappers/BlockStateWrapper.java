@@ -21,6 +21,7 @@ import net.minecraft.world.EmptyBlockView;
 
 import builderb0y.bigglobe.fluids.BigGlobeFluidTags;
 import builderb0y.bigglobe.scripting.wrappers.tags.BlockTag;
+import builderb0y.bigglobe.scripting.wrappers.tags.TagParser;
 import builderb0y.bigglobe.versions.IdentifierVersions;
 import builderb0y.scripting.bytecode.ConstantFactory;
 import builderb0y.bigglobe.scripting.ScriptLogger;
@@ -42,6 +43,8 @@ public class BlockStateWrapper {
 	public static final MethodInfo
 		GET_PROPERTY = MethodInfo.getMethod(BlockStateWrapper.class, "getProperty"),
 		WITH = MethodInfo.getMethod(BlockStateWrapper.class, "with");
+	public static final TagParser
+		TAG_PARSER = new TagParser("BlockTag", BlockTag.class, "BlockState", MethodInfo.inCaller("isIn"));
 
 	public static BlockState getState(MethodHandles.Lookup caller, String name, Class<?> type, String id) throws CommandSyntaxException {
 		if (id == null) return null;

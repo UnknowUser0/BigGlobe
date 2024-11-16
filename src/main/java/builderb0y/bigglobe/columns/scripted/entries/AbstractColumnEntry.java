@@ -371,13 +371,13 @@ public abstract class AbstractColumnEntry implements ColumnEntry, SetBasedMutabl
 				.addFieldGet("maxAccessible", MappedRangeArray.INFO.maxAccessible)
 				.addFieldGet("array", MappedRangeNumberArray.ARRAY)
 				.addMethodInvoke("get", switch (accessContext.exposedType().getSort()) {
-					case BYTE    -> NumberArray.INFO.getB;
-					case SHORT   -> NumberArray.INFO.getS;
-					case INT     -> NumberArray.INFO.getI;
-					case LONG    -> NumberArray.INFO.getL;
-					case FLOAT   -> NumberArray.INFO.getF;
-					case DOUBLE  -> NumberArray.INFO.getD;
-					case BOOLEAN -> NumberArray.INFO.getZ;
+					case BYTE    -> NumberArray.INFO.implGetB;
+					case SHORT   -> NumberArray.INFO.implGetS;
+					case INT     -> NumberArray.INFO.implGetI;
+					case LONG    -> NumberArray.INFO.implGetL;
+					case FLOAT   -> NumberArray.INFO.implGetF;
+					case DOUBLE  -> NumberArray.INFO.implGetD;
+					case BOOLEAN -> NumberArray.INFO.implGetZ;
 					default -> throw new IllegalStateException("Unsupported type: " + accessContext);
 				})
 				.addVariable("fallback", this.valid != null ? this.valid.getFallback(this.params.type(), context.root()) : ldc(0))
@@ -617,13 +617,13 @@ public abstract class AbstractColumnEntry implements ColumnEntry, SetBasedMutabl
 				.addFieldGet("maxCached", MappedRangeArray.INFO.maxCached)
 				.addFieldGet("array", MappedRangeNumberArray.ARRAY)
 				.addMethodInvoke("set", switch (accessContext.exposedType().getSort()) {
-					case BYTE    -> NumberArray.INFO.setB;
-					case SHORT   -> NumberArray.INFO.setS;
-					case INT     -> NumberArray.INFO.setI;
-					case LONG    -> NumberArray.INFO.setL;
-					case FLOAT   -> NumberArray.INFO.setF;
-					case DOUBLE  -> NumberArray.INFO.setD;
-					case BOOLEAN -> NumberArray.INFO.setZ;
+					case BYTE    -> NumberArray.INFO.implSetB;
+					case SHORT   -> NumberArray.INFO.implSetS;
+					case INT     -> NumberArray.INFO.implSetI;
+					case LONG    -> NumberArray.INFO.implSetL;
+					case FLOAT   -> NumberArray.INFO.implSetF;
+					case DOUBLE  -> NumberArray.INFO.implSetD;
+					case BOOLEAN -> NumberArray.INFO.implSetZ;
 					default -> throw new IllegalStateException("Unsupported type: " + accessContext);
 				})
 				.addFunctionInvoke("compute", context.loadSelf(), memory.getTyped(COMPUTE_ONE).info)
@@ -663,10 +663,12 @@ public abstract class AbstractColumnEntry implements ColumnEntry, SetBasedMutabl
 		Integer flagsIndex = memory.getTyped(ColumnEntryMemory.FLAGS_INDEX);
 		setterMethod.setCode(
 			"""
-			flags = flags | flagBitmask
-			var array = valueField
-			if (y >= array.minCached && y < array.maxCached:
-				array.array.set(y - array.minCached, value)
+			if (var*(mappedArray := valueField).valid:
+				var array = mappedArray.array
+				y -= mappedArray.minCached
+				if (y >= 0 && y < array.length:
+					array.set(y, value)
+				)
 			)
 			""",
 			(MutableScriptEnvironment environment) -> {
@@ -676,17 +678,19 @@ public abstract class AbstractColumnEntry implements ColumnEntry, SetBasedMutabl
 				.addVariableConstant("flagBitmask", DataCompileContext.flagsFieldBitmask(flagsIndex))
 				.addVariableLoad("y", TypeInfos.INT)
 				.addVariableLoad("value", accessContext.exposedType())
+				.addFieldGet("valid", MappedRangeArray.INFO.valid)
 				.addFieldGet("minCached", MappedRangeArray.INFO.minCached)
 				.addFieldGet("maxCached", MappedRangeArray.INFO.maxCached)
 				.addFieldGet("array", MappedRangeNumberArray.ARRAY)
+				.addFieldInvoke(NumberArray.INFO.length)
 				.addMethodInvoke("set", switch (accessContext.exposedType().getSort()) {
-					case BYTE    -> NumberArray.INFO.setB;
-					case SHORT   -> NumberArray.INFO.setS;
-					case INT     -> NumberArray.INFO.setI;
-					case LONG    -> NumberArray.INFO.setL;
-					case FLOAT   -> NumberArray.INFO.setF;
-					case DOUBLE  -> NumberArray.INFO.setD;
-					case BOOLEAN -> NumberArray.INFO.setZ;
+					case BYTE    -> NumberArray.INFO.implSetB;
+					case SHORT   -> NumberArray.INFO.implSetS;
+					case INT     -> NumberArray.INFO.implSetI;
+					case LONG    -> NumberArray.INFO.implSetL;
+					case FLOAT   -> NumberArray.INFO.implSetF;
+					case DOUBLE  -> NumberArray.INFO.implSetD;
+					case BOOLEAN -> NumberArray.INFO.implSetZ;
 					default -> throw new IllegalStateException("Unsupported type: " + accessContext);
 				})
 				;

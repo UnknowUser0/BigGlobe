@@ -73,12 +73,12 @@ public class RockLayerFeature extends DummyFeature<RockLayerFeature.Config> impl
 						entry.thickness().getBulkX(layerSeed, startX, startZ | relativeZ, thicknessSamples);
 						for (int relativeX = 0; relativeX < 16; relativeX++) {
 							int index = (relativeZ << 4) | relativeX;
-							double center = centerSamples.getD(relativeX) + averageCenter;
-							double thickness = thicknessSamples.getD(relativeX) - (1.0D - entry.restrictions().getRestriction(worldWrapper.lookupColumn(startX | relativeX, startZ | relativeZ), BigGlobeMath.floorI(center))) * entry.thickness().maxValue();
+							double center = centerSamples.implGetD(relativeX) + averageCenter;
+							double thickness = thicknessSamples.implGetD(relativeX) - (1.0D - entry.restrictions().getRestriction(worldWrapper.lookupColumn(startX | relativeX, startZ | relativeZ), BigGlobeMath.floorI(center))) * entry.thickness().maxValue();
 							columnMinYs.setI(index, BigGlobeMath.floorI(center - thickness));
 							columnMaxYs.setI(index, BigGlobeMath.floorI(center + thickness));
-							layerMinY = Math.min(layerMinY, columnMinYs.getI(index));
-							layerMaxY = Math.max(layerMaxY, columnMaxYs.getI(index));
+							layerMinY = Math.min(layerMinY, columnMinYs.implGetI(index));
+							layerMaxY = Math.max(layerMaxY, columnMaxYs.implGetI(index));
 						}
 					}
 
@@ -95,8 +95,8 @@ public class RockLayerFeature extends DummyFeature<RockLayerFeature.Config> impl
 								int sectionMaxY = sectionMinY | 15;
 
 								for (int horizontalIndex = 0; horizontalIndex < 256; horizontalIndex++) {
-									int columnMinY = Math.max(columnMinYs.getI(horizontalIndex), sectionMinY);
-									int columnMaxY = Math.min(columnMaxYs.getI(horizontalIndex), sectionMaxY);
+									int columnMinY = Math.max(columnMinYs.implGetI(horizontalIndex), sectionMinY);
+									int columnMaxY = Math.min(columnMaxYs.implGetI(horizontalIndex), sectionMaxY);
 									for (int columnY = columnMinY; columnY <= columnMaxY; columnY++) {
 										int relativeY = columnY & 15;
 										int index = (relativeY << 8) | horizontalIndex;
