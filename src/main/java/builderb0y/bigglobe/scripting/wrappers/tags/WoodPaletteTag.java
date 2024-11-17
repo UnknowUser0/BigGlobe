@@ -23,13 +23,15 @@ public class WoodPaletteTag extends TagWrapper<WoodPalette, WoodPaletteEntry> {
 		super(list);
 	}
 
-	public static WoodPaletteTag of(MethodHandles.Lookup caller, String name, Class<?> type, String... id) {
-		return of(id);
+	public static WoodPaletteTag of(MethodHandles.Lookup caller, String name, Class<?> type, String... ids) {
+		return of(ids);
 	}
 
-	public static WoodPaletteTag of(String... id) {
-		if (id == null) return null;
-		return new WoodPaletteTag(DelayedEntryList.create(BigGlobeDynamicRegistries.WOOD_PALETTE_REGISTRY_KEY, id));
+	public static WoodPaletteTag of(String... ids) {
+		if (ids == null) return null;
+		DelayedEntryList<WoodPalette> tag = DelayedEntryList.create(BigGlobeDynamicRegistries.WOOD_PALETTE_REGISTRY_KEY, ids);
+		if (tag == null) return null;
+		return new WoodPaletteTag(tag);
 	}
 
 	@Override

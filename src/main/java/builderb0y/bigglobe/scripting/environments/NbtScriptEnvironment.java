@@ -188,7 +188,7 @@ public class NbtScriptEnvironment {
 	public static long    asLong   (NbtElement element) { return element instanceof AbstractNbtNumber number ?  number.longValue  () :  0; }
 	public static float   asFloat  (NbtElement element) { return element instanceof AbstractNbtNumber number ?  number.floatValue () :  0; }
 	public static double  asDouble (NbtElement element) { return element instanceof AbstractNbtNumber number ?  number.doubleValue() :  0; }
-	public static String  asString (NbtElement element) { return element != null ? element.asString() : "null"; }
+	public static String  asString (NbtElement element) { return element != null ? element.asString() : null; }
 
 	public static NbtElement getMember(NbtElement element, String name) {
 		return element instanceof NbtCompound compound ? compound.get(name) : null;

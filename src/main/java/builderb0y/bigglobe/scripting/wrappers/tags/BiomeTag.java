@@ -23,13 +23,15 @@ public class BiomeTag extends TagWrapper<Biome, BiomeEntry> {
 		super(list);
 	}
 
-	public static BiomeTag of(MethodHandles.Lookup caller, String name, Class<?> type, String... id) {
-		return of(id);
+	public static BiomeTag of(MethodHandles.Lookup caller, String name, Class<?> type, String... ids) {
+		return of(ids);
 	}
 
-	public static BiomeTag of(String... id) {
-		if (id == null) return null;
-		return new BiomeTag(DelayedEntryList.create(RegistryKeys.BIOME, id));
+	public static BiomeTag of(String... ids) {
+		if (ids == null) return null;
+		DelayedEntryList<Biome> tag = DelayedEntryList.create(RegistryKeys.BIOME, ids);
+		if (tag == null) return null;
+		return new BiomeTag(tag);
 	}
 
 	@Override

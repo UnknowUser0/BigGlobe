@@ -23,13 +23,15 @@ public class ConfiguredFeatureTag extends TagWrapper<ConfiguredFeature<?, ?>, Co
 		super(list);
 	}
 
-	public static ConfiguredFeatureTag of(MethodHandles.Lookup caller, String name, Class<?> type, String... id) {
-		return of(id);
+	public static ConfiguredFeatureTag of(MethodHandles.Lookup caller, String name, Class<?> type, String... ids) {
+		return of(ids);
 	}
 
-	public static ConfiguredFeatureTag of(String... id) {
-		if (id == null) return null;
-		return new ConfiguredFeatureTag(DelayedEntryList.create(RegistryKeys.CONFIGURED_FEATURE, id));
+	public static ConfiguredFeatureTag of(String... ids) {
+		if (ids == null) return null;
+		DelayedEntryList<ConfiguredFeature<?, ?>> tag = DelayedEntryList.create(RegistryKeys.CONFIGURED_FEATURE, ids);
+		if (tag == null) return null;
+		return new ConfiguredFeatureTag(tag);
 	}
 
 	@Override

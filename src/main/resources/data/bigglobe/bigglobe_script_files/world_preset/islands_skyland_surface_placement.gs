@@ -11,20 +11,20 @@ int depth = floorInt(
 	- (slopeSquared * 3.0L)
 )
 
-if (`bigglobe:overworld/lake_surface_states` != null:
+if (`bigglobe:overworld/skyland_lake_surface_states` != null:
 	setBlockStates(
 		surfaceY - (seed := seed.newSeed()).nextInt(3, 7),
 		surfaceY,
-		`bigglobe:overworld/lake_surface_states`.under
+		`bigglobe:overworld/skyland_lake_surface_states`.under
 	)
 )
 
 if (depth > 0:
-	if (`bigglobe:overworld/lake_surface_states` != null:
+	if (`bigglobe:overworld/skyland_lake_surface_states` != null:
 		setBlockStates(
 			surfaceY - depth,
 			surfaceY,
-			`bigglobe:overworld/lake_surface_states`.top
+			`bigglobe:overworld/skyland_lake_surface_states`.top
 		)
 	)
 	else (

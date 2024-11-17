@@ -23,13 +23,15 @@ public class BlockTag extends TagWrapper<Block, Block> {
 		super(list);
 	}
 
-	public static BlockTag of(MethodHandles.Lookup caller, String name, Class<?> type, String... id) {
-		return of(id);
+	public static BlockTag of(MethodHandles.Lookup caller, String name, Class<?> type, String... ids) {
+		return of(ids);
 	}
 
-	public static BlockTag of(String... id) {
-		if (id == null) return null;
-		return new BlockTag(DelayedEntryList.create(RegistryKeys.BLOCK, id));
+	public static BlockTag of(String... ids) {
+		if (ids == null) return null;
+		DelayedEntryList<Block> tag = DelayedEntryList.create(RegistryKeys.BLOCK, ids);
+		if (tag == null) return null;
+		return new BlockTag(tag);
 	}
 
 	@Override

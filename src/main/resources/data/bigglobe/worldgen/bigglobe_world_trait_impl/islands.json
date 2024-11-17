@@ -27,12 +27,40 @@
 		"set": "`bigglobe:islands/basic_surface_height` = value"
 	},
 	"bigglobe:automatic_snow_y": {
-		"get": "`bigglobe:islands/is_floating` && y > world_traits.`bigglobe:sea_level` + 128 ? `bigglobe:islands/skyland_snow_y` : `bigglobe:islands/snow_height`",
-		"set": "if (`bigglobe:islands/is_floating` && y > world_traits.`bigglobe:sea_level` + 128: `bigglobe:islands/skyland_snow_y` = value) else (`bigglobe:islands/snow_height` = value)"
+		"get": [
+			"`bigglobe:islands/is_floating` && y > world_traits.`bigglobe:sea_level` + 128",
+			"? `bigglobe:islands/skyland_snow_y`",
+			": `bigglobe:islands/snow_height`"
+		],
+		"set": [
+			"`bigglobe:islands/is_floating` && y > world_traits.`bigglobe:sea_level` + 128",
+			"? (`bigglobe:islands/skyland_snow_y` = value)",
+			": (`bigglobe:islands/snow_height` = value)"
+		]
 	},
 	"bigglobe:automatic_surface_y": {
-		"get": "`bigglobe:islands/is_floating` && y > world_traits.`bigglobe:sea_level` + 128 ? `bigglobe:islands/skyland_top` : `bigglobe:islands/eroded_surface_height`",
-		"set": "if (`bigglobe:islands/is_floating` && y > world_traits.`bigglobe:sea_level` + 128: `bigglobe:islands/skyland_top` = value) else (`bigglobe:islands/eroded_surface_height` = value)"
+		"get": [
+			"`bigglobe:islands/is_floating` && y > world_traits.`bigglobe:sea_level` + 128",
+			"? `bigglobe:islands/skyland_top`",
+			": `bigglobe:islands/eroded_surface_height`"
+		],
+		"set": [
+			"`bigglobe:islands/is_floating` && y > world_traits.`bigglobe:sea_level` + 128",
+			"? (`bigglobe:islands/skyland_top` = value)",
+			": (`bigglobe:islands/eroded_surface_height` = value)"
+		]
+	},
+	"bigglobe:automatic_lake_surface_states": {
+		"get": [
+			"`bigglobe:islands/is_floating` && y > world_traits.`bigglobe:sea_level` + 128",
+			"? `bigglobe:overworld/skyland_lake_surface_states`",
+			": `bigglobe:overworld/lake_surface_states`"
+		],
+		"set": [
+			"`bigglobe:islands/is_floating` && y > world_traits.`bigglobe:sea_level` + 128",
+			"? (`bigglobe:overworld/skyland_lake_surface_states` = value)",
+			": (`bigglobe:overworld/lake_surface_states` = value)"
+		]
 	},
 	"bigglobe:cave_noise": {
 		"get": "`bigglobe:islands/cave_noise`(y)",

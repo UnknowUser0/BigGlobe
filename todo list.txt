@@ -32,8 +32,6 @@ to finish before release:
 	document goldenRatio and goldenAngle constants new in MathScriptEnvironment.
 	make surface Y level floor(surface height) instead of ceil().
 	rename cavern-related column values to deep dark.
-	make lakes able to place multiple features on surface.
-		use a tag.
 
 changelog:
 	# Changes for normal players
@@ -146,6 +144,17 @@ scripting:
 			could help with more advanced constant jumps?
 		more sophisticated back-tracking algorithm for pop removal?
 		remove unnecessary parameters for user-defined functions.
+		auto-const variables:
+			if a local variable has a constant value stored in it,
+			then the variable is loaded again, replace that load with the constant.
+			if all instances of loading this variable are replaced with LDC,
+			then the variable can be removed.
+		duplicate variable elimination:
+			if local variable B has local variable A stored in it,
+			and local variable B is loaded before/without an additional store in A,
+			then LOAD B can be replaced with LOAD A.
+			if all instances of LOAD B can be safely replaced with LOAD A,
+			then B can be removed entirely.
 	more invoke syntaxes:
 		non-null invoke?
 			foo.!bar() requires that bar() return a non-null value.

@@ -27,7 +27,7 @@
 					"fluid: 'minecraft:water',",
 					"surface: 'minecraft:mud',",
 					"subsurface: 'minecraft:clay',",
-					"decorator: 'bigglobe:overworld/water_lake_surface'",
+					"decorators: '#bigglobe:overworld/water_lake_surface'",
 				")"
 			]
 		}

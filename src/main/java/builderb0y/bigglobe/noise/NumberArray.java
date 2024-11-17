@@ -43,10 +43,18 @@ instances of NumberArray are NOT thread-safe.
 any thread may allocate NumberArray's, but each NumberArray
 should ONLY be closed from the thread that allocated it.
 */
-@SuppressWarnings({ "OverloadedMethodsWithSameNumberOfParameters", "NumericCastThatLosesPrecision", "ImplicitNumericConversion" })
+@SuppressWarnings({
+	"ImplicitNumericConversion",
+	"NumericCastThatLosesPrecision",
+	"OverloadedMethodsWithSameNumberOfParameters",
+	"RedundantCast",
+	"SameParameterValue"
+})
 public class NumberArray implements AutoCloseable {
 
-	public static final boolean TRACE_ALLOCATIONS = Boolean.getBoolean("bigglobe.traceNumberArrayAllocations");
+	public static final boolean
+		TRACE_ALLOCATIONS = Boolean.getBoolean("bigglobe.traceNumberArrayAllocations"),
+		CHECK_TYPE = Boolean.getBoolean("bigglobe.checkNumberArrayType");
 	public static final byte
 		BYTE_TYPE     = 0,
 		SHORT_TYPE    = 1,
@@ -207,11 +215,11 @@ public class NumberArray implements AutoCloseable {
 
 	//////////////////////////////// allocation ////////////////////////////////
 
-	public static NumberArray allocateBytesHeap     (int bytes   ) { return new Manager(bytes    << BYTE_SHIFT  ).allocateBytesHeap   (        ); }
-	public static NumberArray allocateShortsHeap    (int shorts  ) { return new Manager(shorts   << SHORT_SHIFT ).allocateShortsHeap  (        ); }
-	public static NumberArray allocateIntsHeap      (int ints    ) { return new Manager(ints     << INT_SHIFT   ).allocateIntsHeap    (        ); }
-	public static NumberArray allocateLongsHeap     (int longs   ) { return new Manager(longs    << LONG_SHIFT  ).allocateLongsHeap   (        ); }
-	public static NumberArray allocateFloatsHeap    (int floats  ) { return new Manager(floats   << FLOAT_SHIFT ).allocateFloatsHeap  (        ); }
+	public static NumberArray allocateBytesHeap     (int bytes   ) { return new Manager(bytes    <<   BYTE_SHIFT).allocateBytesHeap   (        ); }
+	public static NumberArray allocateShortsHeap    (int shorts  ) { return new Manager(shorts   <<  SHORT_SHIFT).allocateShortsHeap  (        ); }
+	public static NumberArray allocateIntsHeap      (int ints    ) { return new Manager(ints     <<    INT_SHIFT).allocateIntsHeap    (        ); }
+	public static NumberArray allocateLongsHeap     (int longs   ) { return new Manager(longs    <<   LONG_SHIFT).allocateLongsHeap   (        ); }
+	public static NumberArray allocateFloatsHeap    (int floats  ) { return new Manager(floats   <<  FLOAT_SHIFT).allocateFloatsHeap  (        ); }
 	public static NumberArray allocateDoublesHeap   (int doubles ) { return new Manager(doubles  << DOUBLE_SHIFT).allocateDoublesHeap (        ); }
 	public static NumberArray allocateBooleansHeap  (int booleans) { return new Manager(((booleans - 1) >> 3) + 1).allocateBooleansHeap(booleans); }
 
@@ -232,12 +240,49 @@ public class NumberArray implements AutoCloseable {
 	public int  floatIndexUnchecked(int index) { return ((index + this.elementOffset) <<  FLOAT_SHIFT) + this.byteOffset; }
 	public int doubleIndexUnchecked(int index) { return ((index + this.elementOffset) << DOUBLE_SHIFT) + this.byteOffset; }
 
-	public int   byteIndex         (int index) { return this.  byteIndexUnchecked(Objects.checkIndex(index, this.elementCount)); }
-	public int  shortIndex         (int index) { return this. shortIndexUnchecked(Objects.checkIndex(index, this.elementCount)); }
-	public int    intIndex         (int index) { return this.   intIndexUnchecked(Objects.checkIndex(index, this.elementCount)); }
-	public int   longIndex         (int index) { return this.  longIndexUnchecked(Objects.checkIndex(index, this.elementCount)); }
-	public int  floatIndex         (int index) { return this. floatIndexUnchecked(Objects.checkIndex(index, this.elementCount)); }
-	public int doubleIndex         (int index) { return this.doubleIndexUnchecked(Objects.checkIndex(index, this.elementCount)); }
+	public int   byteIndex         (int index) { return this.  byteIndexUnchecked(this.checkTypeIndex(  BYTE_TYPE, index)); }
+	public int  shortIndex         (int index) { return this. shortIndexUnchecked(this.checkTypeIndex( SHORT_TYPE, index)); }
+	public int    intIndex         (int index) { return this.   intIndexUnchecked(this.checkTypeIndex(   INT_TYPE, index)); }
+	public int   longIndex         (int index) { return this.  longIndexUnchecked(this.checkTypeIndex(  LONG_TYPE, index)); }
+	public int  floatIndex         (int index) { return this. floatIndexUnchecked(this.checkTypeIndex( FLOAT_TYPE, index)); }
+	public int doubleIndex         (int index) { return this.doubleIndexUnchecked(this.checkTypeIndex(DOUBLE_TYPE, index)); }
+
+	public int checkIndex(int index) {
+		return Objects.checkIndex(index, this.elementCount);
+	}
+
+	public int checkRange(int from, int to) {
+		return Objects.checkFromToIndex(from, to, this.elementCount);
+	}
+
+	public int checkTypeIndex(int type, int index) {
+		this.checkType(type);
+		return this.checkIndex(index);
+	}
+
+	public int checkTypeRange(int type, int from, int to) {
+		this.checkType(type);
+		return this.checkRange(from, to);
+	}
+
+	public void checkType(int type) {
+		if (CHECK_TYPE && this.type != type) {
+			throw new IllegalStateException("Incorrect type: expected " + typeName(type) + ", got " + typeName(this.type));
+		}
+	}
+
+	public static String typeName(int type) {
+		return switch (type) {
+			case    BYTE_TYPE -> "byte";
+			case   SHORT_TYPE -> "short";
+			case     INT_TYPE -> "int";
+			case    LONG_TYPE -> "long";
+			case   FLOAT_TYPE -> "float";
+			case  DOUBLE_TYPE -> "double";
+			case BOOLEAN_TYPE -> "boolean";
+			default -> "unknown (" + type + ')';
+		};
+	}
 
 	//////////////////////////////// get ////////////////////////////////
 
@@ -248,7 +293,7 @@ public class NumberArray implements AutoCloseable {
 	public float   implGetF(int index) { return (float )( FLOAT_ACCESS.get(this.manager.base, this. floatIndex(index))); }
 	public double  implGetD(int index) { return (double)(DOUBLE_ACCESS.get(this.manager.base, this.doubleIndex(index))); }
 	public boolean implGetZ(int index) {
-		index = Objects.checkIndex(index, this.elementCount) + this.elementOffset;
+		index = this.checkTypeIndex(BOOLEAN_TYPE, index) + this.elementOffset;
 		return ((this.manager.base[(index >>> 3) + this.byteOffset] >>> (index & 7)) & 1) != 0;
 	}
 
@@ -352,7 +397,7 @@ public class NumberArray implements AutoCloseable {
 	public void implSetF(int index, float   value) {  FLOAT_ACCESS.set(this.manager.base, this. floatIndex(index), value); }
 	public void implSetD(int index, double  value) { DOUBLE_ACCESS.set(this.manager.base, this.doubleIndex(index), value); }
 	public void implSetZ(int index, boolean value) {
-		index = Objects.checkIndex(index, this.elementCount) + this.elementOffset;
+		index = this.checkTypeIndex(BOOLEAN_TYPE, index) + this.elementOffset;
 		if (value) {
 			this.manager.base[(index >>> 3) + this.byteOffset] |=  (1 << (index & 7));
 		}
@@ -456,7 +501,7 @@ public class NumberArray implements AutoCloseable {
 
 	public void implFillFromTo(int from, int to, byte value) {
 		byte[] base = this.manager.base;
-		Objects.checkFromToIndex(from, to, this.elementCount);
+		this.checkTypeRange(BYTE_TYPE, from, to);
 		if (from == to) return;
 		from = this.byteIndexUnchecked(from);
 		to = this.byteIndexUnchecked(to);
@@ -467,7 +512,7 @@ public class NumberArray implements AutoCloseable {
 
 	public void implFillFromTo(int from, int to, short value) {
 		byte[] base = this.manager.base;
-		Objects.checkFromToIndex(from, to, this.elementCount);
+		this.checkTypeRange(SHORT_TYPE, from, to);
 		if (from == to) return;
 		from = this.shortIndexUnchecked(from);
 		to = this.shortIndexUnchecked(to);
@@ -478,7 +523,7 @@ public class NumberArray implements AutoCloseable {
 
 	public void implFillFromTo(int from, int to, int value) {
 		byte[] base = this.manager.base;
-		Objects.checkFromToIndex(from, to, this.elementCount);
+		this.checkTypeRange(INT_TYPE, from, to);
 		if (from == to) return;
 		from = this.intIndexUnchecked(from);
 		to = this.intIndexUnchecked(to);
@@ -489,7 +534,7 @@ public class NumberArray implements AutoCloseable {
 
 	public void implFillFromTo(int from, int to, long value) {
 		byte[] base = this.manager.base;
-		Objects.checkFromToIndex(from, to, this.elementCount);
+		this.checkTypeRange(LONG_TYPE, from, to);
 		if (from == to) return;
 		from = this.longIndexUnchecked(from);
 		to = this.longIndexUnchecked(to);
@@ -500,7 +545,7 @@ public class NumberArray implements AutoCloseable {
 
 	public void implFillFromTo(int from, int to, float value) {
 		byte[] base = this.manager.base;
-		Objects.checkFromToIndex(from, to, this.elementCount);
+		this.checkTypeRange(FLOAT_TYPE, from, to);
 		if (from == to) return;
 		from = this.floatIndexUnchecked(from);
 		to = this.floatIndexUnchecked(to);
@@ -511,7 +556,7 @@ public class NumberArray implements AutoCloseable {
 
 	public void implFillFromTo(int from, int to, double value) {
 		byte[] base = this.manager.base;
-		Objects.checkFromToIndex(from, to, this.elementCount);
+		this.checkTypeRange(DOUBLE_TYPE, from, to);
 		if (from == to) return;
 		from = this.doubleIndexUnchecked(from);
 		to = this.doubleIndexUnchecked(to);
@@ -522,7 +567,7 @@ public class NumberArray implements AutoCloseable {
 
 	public void implFillFromTo(int from, int to, boolean value) {
 		byte[] base = this.manager.base;
-		Objects.checkFromToIndex(from, to, this.elementCount);
+		this.checkTypeRange(BOOLEAN_TYPE, from, to);
 		if (from == to) return;
 		from += this.elementOffset;
 		to   += this.elementOffset;
@@ -566,11 +611,11 @@ public class NumberArray implements AutoCloseable {
 
 	public void fillFromTo(int from, int to, byte value) {
 		switch (this.type) {
-			case    BYTE_TYPE -> this.implFillFromTo(from, to, (byte)(value));
-			case   SHORT_TYPE -> this.implFillFromTo(from, to, (short)(value));
-			case     INT_TYPE -> this.implFillFromTo(from, to, (int)(value));
-			case    LONG_TYPE -> this.implFillFromTo(from, to, (long)(value));
-			case   FLOAT_TYPE -> this.implFillFromTo(from, to, (float)(value));
+			case    BYTE_TYPE -> this.implFillFromTo(from, to, (byte  )(value));
+			case   SHORT_TYPE -> this.implFillFromTo(from, to, (short )(value));
+			case     INT_TYPE -> this.implFillFromTo(from, to, (int   )(value));
+			case    LONG_TYPE -> this.implFillFromTo(from, to, (long  )(value));
+			case   FLOAT_TYPE -> this.implFillFromTo(from, to, (float )(value));
 			case  DOUBLE_TYPE -> this.implFillFromTo(from, to, (double)(value));
 			case BOOLEAN_TYPE -> this.implFillFromTo(from, to, value != 0);
 			default -> throw new IllegalStateException("Invalid type: " + this.type);
@@ -579,11 +624,11 @@ public class NumberArray implements AutoCloseable {
 
 	public void fillFromTo(int from, int to, short value) {
 		switch (this.type) {
-			case    BYTE_TYPE -> this.implFillFromTo(from, to, (byte)(value));
-			case   SHORT_TYPE -> this.implFillFromTo(from, to, (short)(value));
-			case     INT_TYPE -> this.implFillFromTo(from, to, (int)(value));
-			case    LONG_TYPE -> this.implFillFromTo(from, to, (long)(value));
-			case   FLOAT_TYPE -> this.implFillFromTo(from, to, (float)(value));
+			case    BYTE_TYPE -> this.implFillFromTo(from, to, (byte  )(value));
+			case   SHORT_TYPE -> this.implFillFromTo(from, to, (short )(value));
+			case     INT_TYPE -> this.implFillFromTo(from, to, (int   )(value));
+			case    LONG_TYPE -> this.implFillFromTo(from, to, (long  )(value));
+			case   FLOAT_TYPE -> this.implFillFromTo(from, to, (float )(value));
 			case  DOUBLE_TYPE -> this.implFillFromTo(from, to, (double)(value));
 			case BOOLEAN_TYPE -> this.implFillFromTo(from, to, value != 0);
 			default -> throw new IllegalStateException("Invalid type: " + this.type);
@@ -592,11 +637,11 @@ public class NumberArray implements AutoCloseable {
 
 	public void fillFromTo(int from, int to, int value) {
 		switch (this.type) {
-			case    BYTE_TYPE -> this.implFillFromTo(from, to, (byte)(value));
-			case   SHORT_TYPE -> this.implFillFromTo(from, to, (short)(value));
-			case     INT_TYPE -> this.implFillFromTo(from, to, (int)(value));
-			case    LONG_TYPE -> this.implFillFromTo(from, to, (long)(value));
-			case   FLOAT_TYPE -> this.implFillFromTo(from, to, (float)(value));
+			case    BYTE_TYPE -> this.implFillFromTo(from, to, (byte  )(value));
+			case   SHORT_TYPE -> this.implFillFromTo(from, to, (short )(value));
+			case     INT_TYPE -> this.implFillFromTo(from, to, (int   )(value));
+			case    LONG_TYPE -> this.implFillFromTo(from, to, (long  )(value));
+			case   FLOAT_TYPE -> this.implFillFromTo(from, to, (float )(value));
 			case  DOUBLE_TYPE -> this.implFillFromTo(from, to, (double)(value));
 			case BOOLEAN_TYPE -> this.implFillFromTo(from, to, value != 0);
 			default -> throw new IllegalStateException("Invalid type: " + this.type);
@@ -605,11 +650,11 @@ public class NumberArray implements AutoCloseable {
 
 	public void fillFromTo(int from, int to, long value) {
 		switch (this.type) {
-			case    BYTE_TYPE -> this.implFillFromTo(from, to, (byte)(value));
-			case   SHORT_TYPE -> this.implFillFromTo(from, to, (short)(value));
-			case     INT_TYPE -> this.implFillFromTo(from, to, (int)(value));
-			case    LONG_TYPE -> this.implFillFromTo(from, to, (long)(value));
-			case   FLOAT_TYPE -> this.implFillFromTo(from, to, (float)(value));
+			case    BYTE_TYPE -> this.implFillFromTo(from, to, (byte  )(value));
+			case   SHORT_TYPE -> this.implFillFromTo(from, to, (short )(value));
+			case     INT_TYPE -> this.implFillFromTo(from, to, (int   )(value));
+			case    LONG_TYPE -> this.implFillFromTo(from, to, (long  )(value));
+			case   FLOAT_TYPE -> this.implFillFromTo(from, to, (float )(value));
 			case  DOUBLE_TYPE -> this.implFillFromTo(from, to, (double)(value));
 			case BOOLEAN_TYPE -> this.implFillFromTo(from, to, value != 0);
 			default -> throw new IllegalStateException("Invalid type: " + this.type);
@@ -618,11 +663,11 @@ public class NumberArray implements AutoCloseable {
 
 	public void fillFromTo(int from, int to, float value) {
 		switch (this.type) {
-			case    BYTE_TYPE -> this.implFillFromTo(from, to, (byte)(value));
-			case   SHORT_TYPE -> this.implFillFromTo(from, to, (short)(value));
-			case     INT_TYPE -> this.implFillFromTo(from, to, (int)(value));
-			case    LONG_TYPE -> this.implFillFromTo(from, to, (long)(value));
-			case   FLOAT_TYPE -> this.implFillFromTo(from, to, (float)(value));
+			case    BYTE_TYPE -> this.implFillFromTo(from, to, (byte  )(value));
+			case   SHORT_TYPE -> this.implFillFromTo(from, to, (short )(value));
+			case     INT_TYPE -> this.implFillFromTo(from, to, (int   )(value));
+			case    LONG_TYPE -> this.implFillFromTo(from, to, (long  )(value));
+			case   FLOAT_TYPE -> this.implFillFromTo(from, to, (float )(value));
 			case  DOUBLE_TYPE -> this.implFillFromTo(from, to, (double)(value));
 			case BOOLEAN_TYPE -> this.implFillFromTo(from, to, value != 0);
 			default -> throw new IllegalStateException("Invalid type: " + this.type);
@@ -631,11 +676,11 @@ public class NumberArray implements AutoCloseable {
 
 	public void fillFromTo(int from, int to, double value) {
 		switch (this.type) {
-			case    BYTE_TYPE -> this.implFillFromTo(from, to, (byte)(value));
-			case   SHORT_TYPE -> this.implFillFromTo(from, to, (short)(value));
-			case     INT_TYPE -> this.implFillFromTo(from, to, (int)(value));
-			case    LONG_TYPE -> this.implFillFromTo(from, to, (long)(value));
-			case   FLOAT_TYPE -> this.implFillFromTo(from, to, (float)(value));
+			case    BYTE_TYPE -> this.implFillFromTo(from, to, (byte  )(value));
+			case   SHORT_TYPE -> this.implFillFromTo(from, to, (short )(value));
+			case     INT_TYPE -> this.implFillFromTo(from, to, (int   )(value));
+			case    LONG_TYPE -> this.implFillFromTo(from, to, (long  )(value));
+			case   FLOAT_TYPE -> this.implFillFromTo(from, to, (float )(value));
 			case  DOUBLE_TYPE -> this.implFillFromTo(from, to, (double)(value));
 			case BOOLEAN_TYPE -> this.implFillFromTo(from, to, value != 0);
 			default -> throw new IllegalStateException("Invalid type: " + this.type);

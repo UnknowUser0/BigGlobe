@@ -23,13 +23,15 @@ public class StructurePlacementScriptTag extends TagWrapper<CombinedStructureScr
 		super(list);
 	}
 
-	public static StructurePlacementScriptTag of(MethodHandles.Lookup caller, String name, Class<?> type, String... id) {
-		return of(id);
+	public static StructurePlacementScriptTag of(MethodHandles.Lookup caller, String name, Class<?> type, String... ids) {
+		return of(ids);
 	}
 
-	public static StructurePlacementScriptTag of(String... id) {
-		if (id == null) return null;
-		return new StructurePlacementScriptTag(DelayedEntryList.create(BigGlobeDynamicRegistries.SCRIPT_STRUCTURE_PLACEMENT_REGISTRY_KEY, id));
+	public static StructurePlacementScriptTag of(String... ids) {
+		if (ids == null) return null;
+		DelayedEntryList<CombinedStructureScripts> tag = DelayedEntryList.create(BigGlobeDynamicRegistries.SCRIPT_STRUCTURE_PLACEMENT_REGISTRY_KEY, ids);
+		if (tag == null) return null;
+		return new StructurePlacementScriptTag(tag);
 	}
 
 	@Override

@@ -1,7 +1,8 @@
 {
 	"replace": false,
 	"values": [
-		"bigglobe:overworld/column_value/surface_y/0_lake",
+		"bigglobe:overworld/column_value/0/lake",
+
 		"bigglobe:overworld/column_value/surface_y/bigger_desert_pyramid",
 		"bigglobe:overworld/column_value/surface_y/campfire",
 		"bigglobe:overworld/column_value/surface_y/igloo",

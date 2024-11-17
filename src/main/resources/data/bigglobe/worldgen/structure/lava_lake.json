@@ -13,7 +13,7 @@
 					"fluid: 'minecraft:lava',",
 					"surface: 'minecraft:blackstone',",
 					"subsurface: 'minecraft:basalt[axis=y]',",
-					"decorator: 'bigglobe:overworld/lava_lake_surface'",
+					"decorators: '#bigglobe:overworld/lava_lake_surface'",
 				")"
 			]
 		}

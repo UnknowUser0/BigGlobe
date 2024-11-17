@@ -138,6 +138,7 @@ public class WaypointEntityRenderer extends BigGlobeEntityRenderer<WaypointEntit
 
 	@Override
 	public void updateState(WaypointEntity entity, WaypointEntityRenderer.State state, float partialTicks) {
+		state.age    = entity.age;
 		state.health = entity.health;
 		state.orbits = entity.orbits;
 	}

@@ -1,0 +1,12 @@
+{
+	"type": {
+		"type": "class",
+		"name": "LakeSurfaceStates",
+		"fields": [
+			{ "name": "top",   "type": "block_state" },
+			{ "name": "under", "type": "block_state" }
+		]
+	},
+	"is_3d": true,
+	"default": "`bigglobe:overworld/lake_surface_states`"
+}

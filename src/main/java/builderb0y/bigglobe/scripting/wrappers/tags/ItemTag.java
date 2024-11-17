@@ -23,13 +23,15 @@ public class ItemTag extends TagWrapper<Item, Item> {
 		super(list);
 	}
 
-	public static ItemTag of(MethodHandles.Lookup caller, String name, Class<?> type, String... id) {
-		return of(id);
+	public static ItemTag of(MethodHandles.Lookup caller, String name, Class<?> type, String... ids) {
+		return of(ids);
 	}
 
-	public static ItemTag of(String... id) {
-		if (id == null) return null;
-		return new ItemTag(DelayedEntryList.create(RegistryKeys.ITEM, id));
+	public static ItemTag of(String... ids) {
+		if (ids == null) return null;
+		DelayedEntryList<Item> tag = DelayedEntryList.create(RegistryKeys.ITEM, ids);
+		if (tag == null) return null;
+		return new ItemTag(tag);
 	}
 
 	@Override

@@ -64,10 +64,12 @@ public class DelayedEntryList<T> implements DelayedCompileable {
 	}
 
 	public static <T> DelayedEntryList<T> create(RegistryKey<Registry<T>> key, String... args) {
-		return new DelayedEntryList<>(BigGlobeMod.getRegistry(key), Arrays.stream(args).map(DelayedEntry::new).toList());
+		List<DelayedEntry> list = Arrays.stream(args).filter(Objects::nonNull).map(DelayedEntry::new).toList();
+		return list.isEmpty() ? null : new DelayedEntryList<>(BigGlobeMod.getRegistry(key), list);
 	}
 
 	public static <T> DelayedEntryList<T> create(RegistryKey<Registry<T>> registryKey, String input) {
+		if (input == null) return null;
 		return new DelayedEntryList<>(BigGlobeMod.getRegistry(registryKey), Collections.singletonList(new DelayedEntry(input)));
 	}
 

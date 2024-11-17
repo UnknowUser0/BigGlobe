@@ -23,13 +23,15 @@ public class StructurePieceTypeTag extends TagWrapper<StructurePieceType, Struct
 		super(list);
 	}
 
-	public static StructurePieceTypeTag of(MethodHandles.Lookup caller, String name, Class<?> type, String... id) {
-		return of(id);
+	public static StructurePieceTypeTag of(MethodHandles.Lookup caller, String name, Class<?> type, String... ids) {
+		return of(ids);
 	}
 
-	public static StructurePieceTypeTag of(String... id) {
-		if (id == null) return null;
-		return new StructurePieceTypeTag(DelayedEntryList.create(RegistryKeys.STRUCTURE_PIECE, id));
+	public static StructurePieceTypeTag of(String... ids) {
+		if (ids == null) return null;
+		DelayedEntryList<StructurePieceType> tag = DelayedEntryList.create(RegistryKeys.STRUCTURE_PIECE, ids);
+		if (tag == null) return null;
+		return new StructurePieceTypeTag(tag);
 	}
 
 	@Override
