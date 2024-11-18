@@ -8,7 +8,7 @@
 			"placeFeature(x, 0, z, world_traits.`bigglobe:cave_decorator`(x, z))",
 			"random.if (",
 				"int y = random.nextInt(world_traits.`bigglobe:deep_dark_min_y`(x, z), world_traits.`bigglobe:deep_dark_max_y`(x, z))",
-				"placeFeature(x, y, z, 'minecraft:sculk_patch_deep_dark')",
+				"placeFeature(x, y, z, 'bigglobe:overworld/sculk_patch')",
 			")",
 		")"
 	]

@@ -60,7 +60,7 @@ public class TagParser implements Consumer<MutableScriptEnvironment> {
 				}
 				else {
 					if (implicit) {
-						ScriptLogger.LOGGER.warn("Non-constant tag; this will be worse on performance. Use an explicit cast to suppress this warning. " + ScriptParsingException.appendContext(parser.input));
+						ScriptLogger.LOGGER.warn(ScriptParsingException.appendContext("Non-constant tag; this will be worse on performance. Use an explicit cast to suppress this warning.", parser.input));
 					}
 					return invokeStatic(
 						this.nonConstant,

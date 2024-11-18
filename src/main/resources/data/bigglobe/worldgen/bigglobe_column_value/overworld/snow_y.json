@@ -14,7 +14,7 @@
 				"(terrainHeight - river_water_y) / 32.0L",
 			")",
 		")",
-		"snowHeight"
+		"return(snowHeight)"
 	],
 	"valid": {
 		"where": "processed_surface_y > sea_level"

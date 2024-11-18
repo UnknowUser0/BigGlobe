@@ -32,7 +32,7 @@ public abstract class AbstractConstantFactory implements FunctionHandler {
 				return new CastResult(this.createConstant(argument.getConstantValue()), true);
 			}
 			else {
-				if (implicit) ScriptLogger.LOGGER.warn("Non-constant " + this.inType.getClassName() + " input for implicit cast to " + this.outType.getClassName() + ". This will be worse on performance. Use an explicit cast to suppress this warning. " + ScriptParsingException.appendContext(parser.input));
+				if (implicit) ScriptLogger.LOGGER.warn(ScriptParsingException.appendContext("Non-constant " + this.inType.getClassName() + " input for implicit cast to " + this.outType.getClassName() + ". This will be worse on performance. Use an explicit cast to suppress this warning.", parser.input));
 				return new CastResult(this.createNonConstant(argument), true);
 			}
 		}

@@ -27,8 +27,8 @@
 								]
 							},
 							"valid": {
-								"max_y": "ceilInt(`bigglobe:overworld/processed_surface_y`)",
-								"min_y": "hints.fill ? 16x8000_0000u : ceilInt(`bigglobe:overworld/basic_surface_y`) - max(hints.distanceBetweenColumns << 2, 8)"
+								"max_y": "world_traits.`bigglobe:y_level_on_surface`",
+								"min_y": "hints.fill ? 16x8000_0000u : world_traits.`bigglobe:y_level_on_surface` - max(hints.distanceBetweenColumns << 2, 16)"
 							},
 							"children": [
 								{
@@ -41,13 +41,13 @@
 									"valid": {
 										"where": "hints.carve",
 										"min_y": "higherInt(`bigglobe:overworld/basic_surface_y` - `bigglobe:overworld/cave`.depth)",
-										"max_y": "higherInt(`bigglobe:overworld/processed_surface_y`)"
+										"max_y": "world_traits.`bigglobe:y_level_on_surface`"
 									}
 								},
 								{
 									"type": "simple_3d",
 									"state": "'minecraft:air'",
-									"condition": "`bigglobe:overworld/biased_cavern_noise`(y) > 0.0I",
+									"condition": "`bigglobe:overworld/biased_deep_dark_noise`(y) > 0.0I",
 									"valid": {
 										"where": "hints.carve",
 										"min_y": "world_traits.`bigglobe:deep_dark_min_y`",
@@ -88,7 +88,7 @@
 							"type": "simple_2d",
 							"state": "'minecraft:water[level=0]'",
 							"valid": {
-								"min_y": "ceilInt(`bigglobe:overworld/processed_surface_y`)",
+								"min_y": "world_traits.`bigglobe:y_level_on_surface`",
 								"max_y": "`bigglobe:overworld/sea_level`"
 							}
 						},
@@ -96,17 +96,18 @@
 							"type": "simple_2d",
 							"state": "'bigglobe:river_water[level=0]'",
 							"before_children": [
-								"int y = ceilInt(`bigglobe:overworld/river_water_y`) - 1",
-								"if (y > `bigglobe:overworld/processed_surface_y`:",
-									"int levels = floorInt(`bigglobe:overworld/river_water_y` % 1.0L * 8.0L)",
+								"double waterSurfaceY = `bigglobe:overworld/river_water_y`",
+								"int y = int(waterSurfaceY)",
+								"if (y >= world_traits.`bigglobe:y_level_on_surface`:",
+									"int levels = int((waterSurfaceY - floor(waterSurfaceY)) * 8.0L)",
 									"if (levels > 0:",
 										"setBlockState(y, BlockState('bigglobe:river_water', level: 7 - levels))",
 									")",
 								")"
 							],
 							"valid": {
-								"min_y": "max(ceilInt(`bigglobe:overworld/processed_surface_y`), `bigglobe:overworld/sea_level`)",
-								"max_y": "lowerInt(`bigglobe:overworld/river_water_y`)"
+								"min_y": "max(world_traits.`bigglobe:y_level_on_surface`, world_traits.`bigglobe:sea_level`)",
+								"max_y": "int(`bigglobe:overworld/river_water_y`)"
 							}
 						},
 						{

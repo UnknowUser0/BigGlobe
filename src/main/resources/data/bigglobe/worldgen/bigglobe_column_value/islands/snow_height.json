@@ -15,6 +15,6 @@
 				"(terrainHeight - `bigglobe:overworld/sea_level`) / 32.0L",
 			")",
 		")",
-		"snowHeight"
+		"return(snowHeight)"
 	]
 }

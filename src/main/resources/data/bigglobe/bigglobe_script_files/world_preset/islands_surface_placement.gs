@@ -76,6 +76,6 @@ else (
 	)
 )
 
-if (surfaceY > world_traits.`bigglobe:sea_level` && !`bigglobe:islands/is_volcano` && (seed := seed.newSeed()).nextBoolean(`bigglobe:islands/snow_chance`):
+if (surfaceY > world_traits.`bigglobe:sea_level` && !`bigglobe:islands/is_volcano` && (seed := seed.newSeed()).nextBoolean(world_traits.`bigglobe:snow_chance`):
 	generateSnow(surfaceY, `bigglobe:islands/snow_height`)
 )

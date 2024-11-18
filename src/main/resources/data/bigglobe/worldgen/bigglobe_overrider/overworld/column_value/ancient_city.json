@@ -14,7 +14,7 @@
 							"*",
 							"unmixSmooth(double(piece.minY - 16), double(piece.minY), double(y))",
 						")",
-						"`bigglobe:overworld/biased_cavern_noise`(y) += verticalFactor * horizontalFactor * float(",
+						"`bigglobe:overworld/biased_deep_dark_noise`(y) += verticalFactor * horizontalFactor * float(",
 							"if (verticalSmooth == 0.0L:",
 								"sign(y - baseline)",
 							")",

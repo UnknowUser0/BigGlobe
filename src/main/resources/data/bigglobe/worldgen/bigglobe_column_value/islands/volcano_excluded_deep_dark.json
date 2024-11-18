@@ -5,7 +5,7 @@
 		"is_3d": true
 	},
 	"script": [
-		"float value = `bigglobe:overworld/biased_cavern_noise`",
+		"float value = `bigglobe:overworld/biased_deep_dark_noise`",
 		"if (is_volcano:",
 			"value -= 1.0I - volcano_magma_sdf",
 		")",

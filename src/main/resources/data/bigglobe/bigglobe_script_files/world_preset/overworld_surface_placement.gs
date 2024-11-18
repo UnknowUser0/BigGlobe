@@ -1,4 +1,4 @@
-int surfaceY = ceilInt(`bigglobe:overworld/processed_surface_y`)
+int surfaceY = world_traits.`bigglobe:y_level_on_surface`
 ;skip the bulk of the work if the surface is outside the world height,
 ;which could happen with cubic chunks.
 if (surfaceY.isBetween[minY, maxY]:
@@ -41,7 +41,7 @@ if (surfaceY.isBetween[minY, maxY]:
 			)
 		)
 	)
-	if (`bigglobe:overworld/processed_surface_y` > `bigglobe:overworld/sea_level` && (seed := seed.newSeed()).nextFloat() < world_traits.`bigglobe:snow_chance`:
+	if (`bigglobe:overworld/processed_surface_y` > `bigglobe:overworld/sea_level` && (seed := seed.newSeed()).nextBoolean(world_traits.`bigglobe:snow_chance`):
 		generateSnow(surfaceY, `bigglobe:overworld/snow_y`)
 	)
 )
