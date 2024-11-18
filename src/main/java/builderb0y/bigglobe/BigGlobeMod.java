@@ -66,10 +66,9 @@ import builderb0y.scripting.parsing.ExpressionParser;
 
 public class BigGlobeMod implements ModInitializer {
 
-	public static final String
-		MODID   = "bigglobe",
-		MODNAME = "Big Globe";
-
+	public static final String MODID = "bigglobe";
+	public static final String MODNAME = "Big Globe";
+	
 	public static final Logger LOGGER = LoggerFactory.getLogger(MODNAME);
 	public static final boolean REGEN_WORLDS = Boolean.getBoolean(MODID + ".regenWorlds");
 	public static final boolean MIXIN_AUDIT = Boolean.getBoolean(MODID + ".mixinAudit");
